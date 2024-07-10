@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Dosen {
+  nidn               String         @id
+  nama               String
+  program_studi      String
+  jenjang_pendidikan String
+  jenis_kelamin      String
+  tanggal_lahir      DateTime       @db.Date
+  jabatan_akademik   String
+  no_telephone       String
+  alamat_surel       String
+  RiwayatMasuk       RiwayatMasuk[]
+  ThriDarma          ThriDarma[]
+  DosenJadwal        DosenJadwal[]
+  DosenAccount       DosenAccount[]
+  Jurnal             Jurnal[]
+  PKM                PKM[]
+  Izin               Izin[]
+}
+
+model Account {
+  uuid         String         @id
+  username     String
+  password     String
+  token        String?        @db.VarChar(255)
+  AccountRole  AccountRole[]
+  DosenAccount DosenAccount[]
+  StafAccount  StafAccount[]
+}
+
+model Role {
+  id          Int           @id @default(autoincrement())
+  role        String
+  AccountRole AccountRole[]
+}
+
+model AccountRole {
+  id         Int     @id @default(autoincrement())
+  role_id    Int
+  account_id String
+  role       Role    @relation(fields: [role_id], references: [id])
+  account    Account @relation(fields: [account_id], references: [uuid])
+}
+
+model DosenAccount {
+  id         Int     @id @default(autoincrement())
+  nidn       String
+  account_id String
+  dosen      Dosen   @relation(fields: [nidn], references: [nidn])
+  account    Account @relation(fields: [account_id], references: [uuid])
+}
+
+model StafAccount {
+  id         Int     @id @default(autoincrement())
+  staf_id    Int
+  account_id String
+  staf       Staf    @relation(fields: [staf_id], references: [id])
+  account    Account @relation(fields: [account_id], references: [uuid])
+}
+
+model Staf {
+  id          Int           @id @default(autoincrement())
+  name        String
+  instansi    String
+  StafAccount StafAccount[]
+}
+
+model Pendidikan {
+  id        Int         @id @default(autoincrement())
+  level     String
+  ThriDarma ThriDarma[]
+}
+
+model SemesterAktif {
+  id         Int      @id @default(autoincrement())
+  semester   String
+  tahun_ajar String
+  status     StatusSemester
+  Jurnal     Jurnal[]
+  PKM        PKM[]
+}
+
+model RiwayatMasuk {
+  id       Int      @id @default(autoincrement())
+  nidn     String
+  jam      String
+  hari     String
+  tanggal  String
+  kegiatan Kegiatan
+  tipe     Tipe
+  dosen    Dosen    @relation(fields: [nidn], references: [nidn])
+}
+
+enum Tipe {
+  online
+  offline
+}
+enum StatusSemester {
+  active
+  inactive
+}
+enum Kegiatan {
+  masuk
+  keluar
+}
+
+model ThriDarma {
+  id            Int        @id @default(autoincrement())
+  nidn          String
+  jurnal        Int
+  pendidikan    Int
+  pkm           Int
+  dosen         Dosen      @relation(fields: [nidn], references: [nidn])
+  pendidikanRef Pendidikan @relation(fields: [pendidikan], references: [id])
+  jurnalRef     Jurnal     @relation(fields: [jurnal], references: [id])
+  pkmRef        PKM        @relation(fields: [pkm], references: [id])
+}
+
+model Jadwal {
+  id           Int           @id @default(autoincrement())
+  mata_kuliah  Int
+  kelas        String
+  hari         String
+  tahun_ajaran String
+  DosenJadwal  DosenJadwal[]
+}
+
+model DosenJadwal {
+  id        Int    @id @default(autoincrement())
+  jadwal_id Int
+  dosen_id  String
+  jadwal    Jadwal @relation(fields: [jadwal_id], references: [id])
+  dosen     Dosen  @relation(fields: [dosen_id], references: [nidn])
+}
+
+model Izin {
+  id      Int    @id @default(autoincrement())
+  nidn    String
+  alasan  String
+  bukti   String
+  tanggal String 
+  dosen   Dosen  @relation(fields: [nidn], references: [nidn])
+}
+
+model Jurnal {
+  id                     Int           @id @default(autoincrement())
+  nidn                   String
+  semesterAktif          Int
+  judul_artikel          String
+  nama_jurnal            String
+  tatuan_laman_jurnal    String
+  tanggal_terbit         String
+  volume                 String
+  nomor                  String
+  halaman                String
+  penerbit_penyelanggara String
+  ISSN                   String
+  upload_document        String
+  dosen                  Dosen         @relation(fields: [nidn], references: [nidn])
+  semesterAktifRef       SemesterAktif @relation(fields: [semesterAktif], references: [id])
+  ThriDarma              ThriDarma[]
+}
+
+model PKM {
+  id                  Int           @id @default(autoincrement())
+  nidn                String
+  semesterAktif       Int
+  judul               String
+  tahun_pelaksanaan   String
+  lama_kegiatan       String
+  lokasi_kegiatan     String
+  nomor_sk_pengesahan String
+  upload_document     String
+  dosen               Dosen         @relation(fields: [nidn], references: [nidn])
+  semesterAktifRef    SemesterAktif @relation(fields: [semesterAktif], references: [id])
+  ThriDarma           ThriDarma[]
+}
