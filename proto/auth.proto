@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package auth;
+
+service AuthDosenService {
+    rpc LoginDosen (DosenLoginRequest) returns (BaseResponse);
+}
+
+message DosenLoginRequest {
+    string nidn = 1;
+    string password = 2;
+}
+
+message DosenLoginResponse {
+    string nidn = 1;
+    string token = 2;
+}
+
+message BaseResponse {
+    optional DosenLoginResponse data =1;
+    int32 status_code = 2;
+    string message = 3;
+}
