@@ -3,6 +3,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { Account } from '@prisma/client';
 import {
   CreatePkmRequest,
+  DeletePkmRequest,
   GetListPkmRequest,
   GetPkmByIdRequest,
   PKM_DOSEN_SERVICE_NAME,
@@ -50,5 +51,10 @@ export class ProtoPkmService implements OnModuleInit {
       document,
     };
     return this.pkmServiceClient.updatePkm(updateRequest);
+  }
+
+  delete(account: Account, pkmId: number) {
+    const deleteRequest: DeletePkmRequest = { account, pkmId };
+    return this.pkmServiceClient.deletePkm(deleteRequest);
   }
 }

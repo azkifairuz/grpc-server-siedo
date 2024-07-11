@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -37,6 +38,7 @@ export class ProtoPkmController {
   ) {
     return this.pkmService.create(account, pkmRequest, document.buffer);
   }
+
   @Post(':pkmId')
   @UseInterceptors(FileInterceptor('document'))
   update(
@@ -50,5 +52,10 @@ export class ProtoPkmController {
       file = document.buffer;
     }
     return this.pkmService.update(account, pkmRequest, file, parseInt(pkmId));
+  }
+
+  @Delete(':pkmId')
+  delete(@Authentication() account: Account, @Param('pkmId') pkmId: string) {
+    return this.pkmService.delete(account, parseInt(pkmId));
   }
 }

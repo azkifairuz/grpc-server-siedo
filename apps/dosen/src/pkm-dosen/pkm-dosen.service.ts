@@ -180,7 +180,6 @@ export class PkmDosenService {
           upload_document: true,
         },
       });
-      console.log(isAlreadyHaveFile);
 
       if (!isAlreadyHaveFile) {
         return {
@@ -189,10 +188,17 @@ export class PkmDosenService {
         };
       }
       let fileUrl = isAlreadyHaveFile.upload_document;
+      console.log('fileNameOld', fileUrl);
+
       if (document) {
         fileUrl = await uploadFile(document);
+        console.log('fileNameNew', fileUrl);
       }
-      if (isAlreadyHaveFile.upload_document != fileUrl) {
+      console.log('fileNameOld', isAlreadyHaveFile.upload_document);
+      console.log('fileNameNew', fileUrl);
+      console.log(isAlreadyHaveFile.upload_document != fileUrl);
+
+      if (isAlreadyHaveFile.upload_document == fileUrl) {
         fileUrl = isAlreadyHaveFile.upload_document;
       }
       await this.prismaService.pKM.update({
@@ -284,7 +290,18 @@ export class PkmDosenService {
     if (!dosen) {
       return {
         statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'edit pkm success',
+        message: 'failed dosen not found',
+      };
+    }
+    const isIdValid = await this.prismaService.pKM.findFirst({
+      where: {
+        id: pkmId,
+      },
+    });
+    if (!isIdValid) {
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'pkm not found',
       };
     }
     await this.prismaService.pKM.delete({
