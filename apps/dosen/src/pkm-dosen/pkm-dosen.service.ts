@@ -180,4 +180,35 @@ export class PkmDosenService {
       };
     }
   }
+
+  async getPkmById(account: Account, pkmId: number): Promise<PkmResponse> {
+    const dosen = await this.prismaService.dosenAccount.findFirst({
+      where: {
+        account_id: account.uuid,
+      },
+    });
+    const pkmData = await this.prismaService.pKM.findFirst({
+      where: {
+        AND: [{ id: pkmId }, { nidn: dosen.nidn }],
+      },
+    });
+    const semesterActive = await this.prismaService.semesterAktif.findFirst({
+      where: {
+        status: 'active',
+      },
+    });
+    const pkmResponse: PkmResponse = {
+      id: pkmData.id,
+      NIDN: pkmData.nidn,
+      judul: pkmData.judul,
+      lamaKegiatan: pkmData.lama_kegiatan,
+      lokasiKegiatan: pkmData.lokasi_kegiatan,
+      nomorSkPengesahan: pkmData.nomor_sk_pengesahan,
+      semesterAktif: semesterActive.semester,
+      tahunPelaksanaan: pkmData.tahun_pelaksanaan,
+      uploadDocument: pkmData.upload_document,
+    };
+
+    return pkmResponse;
+  }
 }

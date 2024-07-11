@@ -28,7 +28,7 @@ export class PkmDosenController implements PkmDosenServiceController {
     }
   }
 
-  @GrpcMethod('PkmDosenService', 'getListPkm')
+  @GrpcMethod('PkmDosenService', 'createPKm')
   async createPkm(request: CreatePkmRequest): Promise<BaseResponse> {
     try {
       return await this.pkmDosenService.createPkm(
@@ -40,7 +40,7 @@ export class PkmDosenController implements PkmDosenServiceController {
       throw new Error(error);
     }
   }
-  @GrpcMethod('PkmDosenService', 'getListPkm')
+  @GrpcMethod('PkmDosenService', 'updatePkm')
   async updatePkm(request: UpdatePkmRequest): Promise<BaseResponse> {
     try {
       return await this.pkmDosenService.updatePkm(
@@ -53,12 +53,26 @@ export class PkmDosenController implements PkmDosenServiceController {
       throw new Error(error);
     }
   }
-  @GrpcMethod('PkmDosenService', 'getListPkm')
+  @GrpcMethod('PkmDosenService', 'getPkmById')
   async getPkmById(request: GetPkmByIdRequest): Promise<PkmResponse> {
-    throw new Error('Method not implemented.');
+    try {
+      return await this.pkmDosenService.getPkmById(
+        request.account,
+        request.pkmId,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
-  @GrpcMethod('PkmDosenService', 'getListPkm')
+  @GrpcMethod('PkmDosenService', 'deletePkm')
   async deletePkm(request: DeletePkmRequest): Promise<BaseResponse> {
-    throw new Error('Method not implemented.');
+    try {
+      return await this.pkmDosenService.deletPkm(
+        request.account,
+        request.pkmId,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
