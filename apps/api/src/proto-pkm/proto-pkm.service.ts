@@ -8,6 +8,7 @@ import {
   PKM_DOSEN_SERVICE_NAME,
   PkmDosenServiceClient,
   PkmRequest,
+  UpdatePkmRequest,
 } from 'proto/pkm';
 
 @Injectable()
@@ -34,5 +35,20 @@ export class ProtoPkmService implements OnModuleInit {
   create(account: Account, pkmRequest: PkmRequest, document: Uint8Array) {
     const createRequest: CreatePkmRequest = { account, pkmRequest, document };
     return this.pkmServiceClient.createPkm(createRequest);
+  }
+
+  update(
+    account: Account,
+    pkmRequest: PkmRequest,
+    document: Uint8Array,
+    pkmId: number,
+  ) {
+    const updateRequest: UpdatePkmRequest = {
+      account,
+      pkmRequest,
+      pkmId,
+      document,
+    };
+    return this.pkmServiceClient.updatePkm(updateRequest);
   }
 }

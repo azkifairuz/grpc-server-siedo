@@ -77,7 +77,7 @@ export interface UpdatePkmRequest {
   account: Account | undefined;
   pkmRequest: PkmRequest | undefined;
   pkmId: number;
-  document: Uint8Array;
+  document?: Uint8Array | undefined;
 }
 
 export interface GetPkmByIdRequest {

@@ -78,7 +78,7 @@ message UpdatePkmRequest {
   Account account = 1;
   PkmRequest pkmRequest = 2;
   int32 pkmId = 3;
-  bytes document = 4; 
+  optional bytes document = 4; 
 }
 
 message GetPkmByIdRequest {

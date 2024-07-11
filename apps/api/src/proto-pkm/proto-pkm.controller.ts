@@ -37,4 +37,18 @@ export class ProtoPkmController {
   ) {
     return this.pkmService.create(account, pkmRequest, document.buffer);
   }
+  @Post(':pkmId')
+  @UseInterceptors(FileInterceptor('document'))
+  update(
+    @Authentication() account: Account,
+    @Body() pkmRequest: PkmRequest,
+    @Param('pkmId') pkmId: string,
+    @UploadedFile() document: Express.Multer.File,
+  ) {
+    let file = null;
+    if (document != null) {
+      file = document.buffer;
+    }
+    return this.pkmService.update(account, pkmRequest, file, parseInt(pkmId));
+  }
 }

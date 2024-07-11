@@ -165,7 +165,36 @@ export class PkmDosenService {
           status: 'active',
         },
       });
-      const fileUrl = await uploadFile(document);
+      if (!semesterActive) {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Active semester not found',
+        };
+      }
+
+      const isAlreadyHaveFile = await this.prismaService.pKM.findFirst({
+        where: {
+          AND: [{ nidn: dosen.nidn }, { id: pkmId }],
+        },
+        select: {
+          upload_document: true,
+        },
+      });
+      console.log(isAlreadyHaveFile);
+
+      if (!isAlreadyHaveFile) {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'PKM data not found',
+        };
+      }
+      let fileUrl = isAlreadyHaveFile.upload_document;
+      if (document) {
+        fileUrl = await uploadFile(document);
+      }
+      if (isAlreadyHaveFile.upload_document != fileUrl) {
+        fileUrl = isAlreadyHaveFile.upload_document;
+      }
       await this.prismaService.pKM.update({
         where: {
           id: pkmId,
