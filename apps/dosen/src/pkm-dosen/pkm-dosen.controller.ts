@@ -29,19 +29,27 @@ export class PkmDosenController implements PkmDosenServiceController {
   }
 
   @GrpcMethod('PkmDosenService', 'getListPkm')
-  createPkm(request: CreatePkmRequest): Promise<BaseResponse> {
+  async createPkm(request: CreatePkmRequest): Promise<BaseResponse> {
+    try {
+      return await this.pkmDosenService.createPkm(
+        request.account,
+        request.pkmRequest,
+        request.document,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+  @GrpcMethod('PkmDosenService', 'getListPkm')
+  async updatePkm(request: UpdatePkmRequest): Promise<BaseResponse> {
     throw new Error('Method not implemented.');
   }
   @GrpcMethod('PkmDosenService', 'getListPkm')
-  updatePkm(request: UpdatePkmRequest): Promise<BaseResponse> {
+  async getPkmById(request: GetPkmByIdRequest): Promise<PkmResponse> {
     throw new Error('Method not implemented.');
   }
   @GrpcMethod('PkmDosenService', 'getListPkm')
-  getPkmById(request: GetPkmByIdRequest): Promise<PkmResponse> {
-    throw new Error('Method not implemented.');
-  }
-  @GrpcMethod('PkmDosenService', 'getListPkm')
-  deletePkm(request: DeletePkmRequest): Promise<BaseResponse> {
+  async deletePkm(request: DeletePkmRequest): Promise<BaseResponse> {
     throw new Error('Method not implemented.');
   }
 }

@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/api/test/jest-e2e.json",
-    "generate:proto":"protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./ --ts_proto_opt=nestJs=true ./proto/*.proto"
+    "generate:proto": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./ --ts_proto_opt=nestJs=true ./proto/*.proto"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.10.10",
@@ -30,6 +30,7 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/client": "^5.16.2",
+    "@supabase/supabase-js": "^2.44.3",
     "bcrypt": "^5.1.1",
     "jsonwebtoken": "^9.0.2",
     "passport": "^0.7.0",
@@ -47,6 +48,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.2",
+    "@types/multer": "^1.4.11",
     "@types/node": "^20.3.1",
     "@types/supertest": "^6.0.0",
     "@types/uuid": "^10.0.0",

@@ -7,8 +7,8 @@ const supabase = createClient(
 );
 
 // Upload file using standard upload
-export async function uploadFile(file: Express.Multer.File) {
-  const fileName = `${Date.now()}_${file.originalname}`;
+export async function uploadFile(file: Uint8Array) {
+  const fileName = `${Date.now()}_document`;
 
   const { data, error } = await supabase.storage
     .from('siedo-bucket')

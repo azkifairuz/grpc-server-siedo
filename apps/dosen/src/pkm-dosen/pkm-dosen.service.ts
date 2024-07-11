@@ -2,7 +2,15 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Account } from '@prisma/client';
 import { PrismaService } from 'apps/dosen/common/prisma.service';
 import { ValidationService } from 'apps/dosen/common/validation.service';
-import { GetListPkmResponse, PaginationData, PkmResponse } from 'proto/pkm';
+import {
+  BaseResponse,
+  GetListPkmResponse,
+  PaginationData,
+  PkmRequest,
+  PkmResponse,
+} from 'proto/pkm';
+import { PkmValidation } from './pkm.validation';
+import { uploadFile } from 'utils/fileUploadBucket';
 
 @Injectable()
 export class PkmDosenService {
@@ -73,5 +81,52 @@ export class PkmDosenService {
         message: 'succes get list pkm',
       };
     } catch (error) {}
+  }
+  async createPkm(
+    account: Account,
+    request: PkmRequest,
+    document: Uint8Array,
+  ): Promise<BaseResponse> {
+    try {
+      const dosen = await this.prismaService.dosenAccount.findFirst({
+        where: {
+          account_id: account.uuid,
+        },
+      });
+
+      const pkmRequest: PkmRequest = this.validationService.validate(
+        PkmValidation.PKM_SCHEMA,
+        request,
+      );
+
+      const semesterActive = await this.prismaService.semesterAktif.findFirst({
+        where: {
+          status: 'active',
+        },
+      });
+      const fileUrl = await uploadFile(document);
+      await this.prismaService.pKM.create({
+        data: {
+          judul: pkmRequest.judul,
+          lama_kegiatan: pkmRequest.lamaKegiatan,
+          lokasi_kegiatan: pkmRequest.lokasiKegiatan,
+          nomor_sk_pengesahan: pkmRequest.nomorSkPengesahan,
+          tahun_pelaksanaan: pkmRequest.tahunPelaksanaan,
+          upload_document: fileUrl,
+          nidn: dosen.nidn,
+          semesterAktif: semesterActive.id,
+        },
+      });
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'create pkm success',
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        message: `server error: ${error}`,
+      };
+    }
   }
 }

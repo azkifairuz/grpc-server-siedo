@@ -4,6 +4,6 @@ import { PkmDosenService } from './pkm-dosen.service';
 
 @Module({
   controllers: [PkmDosenController],
-  providers: [PkmDosenService]
+  providers: [PkmDosenService],
 })
 export class PkmDosenModule {}
