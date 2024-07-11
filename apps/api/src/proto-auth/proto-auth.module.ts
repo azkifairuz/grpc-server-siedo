@@ -1,14 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ProtoAuthController } from './proto-auth.controller';
+import { ProtoAuthService } from './proto-auth.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
-import { ProtoAuthModule } from './proto-auth/proto-auth.module';
-import { CommonModule } from 'apps/dosen/common/common.module';
 
 @Module({
   imports: [
-    CommonModule,
     ClientsModule.register([
       {
         name: 'auth',
@@ -19,9 +16,8 @@ import { CommonModule } from 'apps/dosen/common/common.module';
         },
       },
     ]),
-    ProtoAuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [ProtoAuthController],
+  providers: [ProtoAuthService],
 })
-export class AppModule {}
+export class ProtoAuthModule {}

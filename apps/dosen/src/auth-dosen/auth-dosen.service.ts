@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { BaseResponse, DosenLoginRequest } from 'proto/auth';
-import { PrismaService } from '../common/prisma.service';
+import { PrismaService } from '../../common/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { ValidationService } from '../common/validation.service';
+import { ValidationService } from '../../common/validation.service';
 import { AuthDosenValidation } from './auth-dosen.validate';
 @Injectable()
 export class AuthDosenService {

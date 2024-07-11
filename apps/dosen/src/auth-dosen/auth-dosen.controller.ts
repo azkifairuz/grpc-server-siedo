@@ -7,7 +7,7 @@ import {
 } from 'proto/auth';
 import { AuthDosenService } from './auth-dosen.service';
 
-@Controller()
+@Controller('auth')
 export class AuthDosenController implements AuthDosenServiceController {
   constructor(private readonly authService: AuthDosenService) {}
 
