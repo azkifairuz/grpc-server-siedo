@@ -67,10 +67,7 @@ export class PkmDosenController implements PkmDosenServiceController {
   @GrpcMethod('PkmDosenService', 'deletePkm')
   async deletePkm(request: DeletePkmRequest): Promise<BaseResponse> {
     try {
-      return await this.pkmDosenService.deletPkm(
-        request.account,
-        request.pkmId,
-      );
+      return await this.pkmDosenService.delete(request.account, request.pkmId);
     } catch (error) {
       throw new Error(error);
     }

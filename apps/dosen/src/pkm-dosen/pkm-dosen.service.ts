@@ -211,4 +211,27 @@ export class PkmDosenService {
 
     return pkmResponse;
   }
+
+  async delete(account: Account, pkmId: number): Promise<BaseResponse> {
+    const dosen = await this.prismaService.dosenAccount.findFirst({
+      where: {
+        account_id: account.uuid,
+      },
+    });
+    if (!dosen) {
+      return {
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: 'edit pkm success',
+      };
+    }
+    await this.prismaService.pKM.delete({
+      where: {
+        id: pkmId,
+      },
+    });
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'delete pkm success',
+    };
+  }
 }
