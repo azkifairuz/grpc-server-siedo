@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package pkm;
+
+
+service PkmDosenService {
+    rpc GetListPkm (GetListPkmRequest) returns (GetListPkmResponse);
+    rpc CreatePkm (CreatePkmRequest) returns (BaseResponse);
+    rpc UpdatePkm (UpdatePkmRequest) returns (BaseResponse);
+    rpc GetPkmById (GetPkmByIdRequest) returns (PkmResponse);
+    rpc DeletePkm (DeletePkmRequest) returns (BaseResponse);
+}
+
+message Account {
+    string uuid= 1;
+    string username= 2;
+    string password= 3;
+    string token= 4;
+}
+
+message BaseResponse {
+  int32 statusCode = 1;
+  string message = 2;
+}
+
+message PkmResponse {
+  int32 id = 1;
+  string NIDN = 2;
+  string semesterAktif = 3;
+  string judul = 4;
+  string tahun_pelaksanaan = 5;
+  string lama_kegiatan = 6;
+  string lokasi_kegiatan = 7;
+  string nomor_sk_pengesahan = 8;
+  string upload_document = 9;
+}
+
+message PkmRequest {
+  string judul = 1;
+  string tahun_pelaksanaan = 2;
+  string lama_kegiatan = 3;
+  string lokasi_kegiatan = 4;
+  string nomor_sk_pengesahan = 5;
+}
+
+message PaginationData {
+  int32 page = 1;
+  int32 size = 2;
+  optional int32 total_page = 3;
+  optional int32 total_data = 4;
+}
+
+message GetListPkmRequest {
+  Account account = 1;
+  int32 page = 2;
+}
+
+message GetListPkmResponse {
+  repeated PkmResponse data = 1;
+  PaginationData pagination = 2;
+  int32 status_code = 3;
+  string message = 4;
+}
+
+message CreatePkmRequest {
+  Account account = 1;
+  PkmRequest pkmRequest = 2;
+  bytes document = 3; 
+}
+
+message UpdatePkmRequest {
+  Account account = 1;
+  PkmRequest pkmRequest = 2;
+  int32 pkmId = 3;
+  bytes document = 4; 
+}
+
+message GetPkmByIdRequest {
+  Account account = 1;
+  int32 pkmId = 2;
+}
+
+message DeletePkmRequest {
+  Account account = 1;
+  int32 pkmId = 2;
+}
