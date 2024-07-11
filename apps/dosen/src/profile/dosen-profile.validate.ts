@@ -2,7 +2,6 @@ import { ZodType, z } from 'zod';
 
 export class DosenProfileValidation {
   static readonly PROFILE_DOSEN: ZodType = z.object({
-    nidn: z.string().min(3, 'NIDN tidak boleh kosong').max(100),
     nama: z
       .string()
       .min(1, 'Nama tidak boleh kosong')
