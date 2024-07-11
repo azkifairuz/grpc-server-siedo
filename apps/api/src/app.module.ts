@@ -6,6 +6,7 @@ import { join } from 'path';
 import { ProtoAuthModule } from './proto-auth/proto-auth.module';
 import { CommonModule } from 'apps/dosen/common/common.module';
 import { ProtoProfileModule } from './proto-profile/proto-profile.module';
+import { ProtoPkmModule } from './proto-pkm/proto-pkm.module';
 
 @Module({
   imports: [
@@ -27,9 +28,18 @@ import { ProtoProfileModule } from './proto-profile/proto-profile.module';
           protoPath: join(__dirname, '../profile.proto'),
         },
       },
+      {
+        name: 'pkm',
+        transport: Transport.GRPC,
+        options: {
+          package: 'pkm',
+          protoPath: join(__dirname, '../pkm.proto'),
+        },
+      },
     ]),
     ProtoAuthModule,
     ProtoProfileModule,
+    ProtoPkmModule,
   ],
   controllers: [AppController],
   providers: [AppService],

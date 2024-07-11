@@ -12,8 +12,9 @@ async function bootstrap() {
         protoPath: [
           join(__dirname, '../auth.proto'),
           join(__dirname, '../profile.proto'),
+          join(__dirname, '../profile.pkm'),
         ],
-        package: ['auth', 'profile'],
+        package: ['auth', 'profile', 'pkm'],
       },
     },
   );
