@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package profile;
+
+service ProfileDosen {
+    rpc GetProfile (Empty) returns (BaseResponse);
+    rpc UpdateProfile (ProfileDosenRequest) returns (BaseResponse);
+}
+
+
+message ProfileDosenResponse {
+    string nidn = 1;
+    string nama = 2;
+    string programStudi =3 ;
+    string jenjangPendidikan = 4;
+    string jenisKelamin = 5;
+    string tanggalLahir = 6;
+    string jabatanAkademik = 7 ;
+    string noTelephone = 8;
+    string alamatSurel = 9;
+}
+
+
+message ProfileDosenRequest {
+    string nama = 2;
+    string programStudi =3 ;
+    string jenjangPendidikan = 4;
+    string jenisKelamin = 5;
+    string tanggalLahir = 6;
+    string jabatanAkademik = 7 ;
+    string noTelephone = 8;
+    string alamatSurel = 9;
+}
+
+message Empty{}
+message BaseResponse {
+    optional ProfileDosenResponse data =1;
+    int32 status_code = 2;
+    string message = 3;
+}

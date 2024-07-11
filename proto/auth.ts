@@ -20,6 +20,29 @@ export interface DosenLoginResponse {
   token: string;
 }
 
+export interface DosenProfileResponse {
+  nidn: string;
+  nama: string;
+  programStudi: string;
+  jenjangPendidikan: string;
+  jenisKelamin: string;
+  tanggalLahir: string;
+  jabatanAkademik: string;
+  noTelephone: string;
+  alamatSurel: string;
+}
+
+export interface DosenProfileRequest {
+  nama: string;
+  programStudi: string;
+  jenjangPendidikan: string;
+  jenisKelamin: string;
+  tanggalLahir: string;
+  jabatanAkademik: string;
+  noTelephone: string;
+  alamatSurel: string;
+}
+
 export interface BaseResponse {
   data?: DosenLoginResponse | undefined;
   statusCode: number;

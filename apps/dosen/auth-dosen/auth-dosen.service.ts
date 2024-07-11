@@ -45,7 +45,7 @@ export class AuthDosenService {
       if (!isPasswordValid) {
         return {
           statusCode: 404,
-          message: 'username or password',
+          message: 'username or password not valid',
         };
       }
       const secretKey = process.env.JWT_KEY;
