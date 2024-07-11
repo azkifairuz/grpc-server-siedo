@@ -3,6 +3,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { Account } from '@prisma/client';
 import {
   GetListPkmRequest,
+  GetPkmByIdRequest,
   PKM_DOSEN_SERVICE_NAME,
   PkmDosenServiceClient,
 } from 'proto/pkm';
@@ -18,8 +19,13 @@ export class ProtoPkmService implements OnModuleInit {
     );
   }
 
-  get(account: Account, page: number) {
+  get(account: Account, page: number = 1) {
     const getRequest: GetListPkmRequest = { account, page };
     return this.pkmServiceClient.getListPkm(getRequest);
+  }
+
+  getById(account: Account, pkmId: number) {
+    const getByIdReq: GetPkmByIdRequest = { account, pkmId };
+    return this.pkmServiceClient.getPkmById(getByIdReq);
   }
 }

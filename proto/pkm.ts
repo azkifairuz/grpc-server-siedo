@@ -34,6 +34,12 @@ export interface PkmResponse {
   uploadDocument: string;
 }
 
+export interface GetPkmByIdResponse {
+  data?: PkmResponse | undefined;
+  statusCode?: number | undefined;
+  message?: string | undefined;
+}
+
 export interface PkmRequest {
   judul: string;
   tahunPelaksanaan: string;
@@ -56,7 +62,7 @@ export interface GetListPkmRequest {
 
 export interface GetListPkmResponse {
   data: PkmResponse[];
-  pagination: PaginationData | undefined;
+  pagination?: PaginationData | undefined;
   statusCode: number;
   message: string;
 }
@@ -93,7 +99,7 @@ export interface PkmDosenServiceClient {
 
   updatePkm(request: UpdatePkmRequest): Observable<BaseResponse>;
 
-  getPkmById(request: GetPkmByIdRequest): Observable<PkmResponse>;
+  getPkmById(request: GetPkmByIdRequest): Observable<GetPkmByIdResponse>;
 
   deletePkm(request: DeletePkmRequest): Observable<BaseResponse>;
 }
@@ -107,7 +113,9 @@ export interface PkmDosenServiceController {
 
   updatePkm(request: UpdatePkmRequest): Promise<BaseResponse> | Observable<BaseResponse> | BaseResponse;
 
-  getPkmById(request: GetPkmByIdRequest): Promise<PkmResponse> | Observable<PkmResponse> | PkmResponse;
+  getPkmById(
+    request: GetPkmByIdRequest,
+  ): Promise<GetPkmByIdResponse> | Observable<GetPkmByIdResponse> | GetPkmByIdResponse;
 
   deletePkm(request: DeletePkmRequest): Promise<BaseResponse> | Observable<BaseResponse> | BaseResponse;
 }

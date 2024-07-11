@@ -6,12 +6,13 @@ import {
   GetListPkmRequest,
   GetListPkmResponse,
   GetPkmByIdRequest,
+  GetPkmByIdResponse,
   PkmDosenServiceController,
-  PkmResponse,
   UpdatePkmRequest,
 } from 'proto/pkm';
 import { PkmDosenService } from './pkm-dosen.service';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, RpcException } from '@nestjs/microservices';
+import { Status } from '@grpc/grpc-js/build/src/constants';
 
 @Controller('pkm-dosen')
 export class PkmDosenController implements PkmDosenServiceController {
@@ -54,14 +55,17 @@ export class PkmDosenController implements PkmDosenServiceController {
     }
   }
   @GrpcMethod('PkmDosenService', 'getPkmById')
-  async getPkmById(request: GetPkmByIdRequest): Promise<PkmResponse> {
+  async getPkmById(request: GetPkmByIdRequest): Promise<GetPkmByIdResponse> {
     try {
       return await this.pkmDosenService.getPkmById(
         request.account,
         request.pkmId,
       );
     } catch (error) {
-      throw new Error(error);
+      throw new RpcException({
+        code: Status.NOT_FOUND,
+        message: error.message || 'PKM data not found',
+      });
     }
   }
   @GrpcMethod('PkmDosenService', 'deletePkm')

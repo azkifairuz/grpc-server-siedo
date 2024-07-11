@@ -5,6 +5,7 @@ import { ValidationService } from 'apps/dosen/common/validation.service';
 import {
   BaseResponse,
   GetListPkmResponse,
+  GetPkmByIdResponse,
   PaginationData,
   PkmRequest,
   PkmResponse,
@@ -80,7 +81,19 @@ export class PkmDosenService {
         statusCode: HttpStatus.OK,
         message: 'succes get list pkm',
       };
-    } catch (error) {}
+    } catch (error) {
+      return {
+        data: [],
+        pagination: {
+          page,
+          size: 10,
+          totalData: 0,
+          totalPage: 0,
+        },
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: error.message || 'An error occurred',
+      };
+    }
   }
   async createPkm(
     account: Account,
@@ -181,35 +194,56 @@ export class PkmDosenService {
     }
   }
 
-  async getPkmById(account: Account, pkmId: number): Promise<PkmResponse> {
-    const dosen = await this.prismaService.dosenAccount.findFirst({
-      where: {
-        account_id: account.uuid,
-      },
-    });
-    const pkmData = await this.prismaService.pKM.findFirst({
-      where: {
-        AND: [{ id: pkmId }, { nidn: dosen.nidn }],
-      },
-    });
-    const semesterActive = await this.prismaService.semesterAktif.findFirst({
-      where: {
-        status: 'active',
-      },
-    });
-    const pkmResponse: PkmResponse = {
-      id: pkmData.id,
-      NIDN: pkmData.nidn,
-      judul: pkmData.judul,
-      lamaKegiatan: pkmData.lama_kegiatan,
-      lokasiKegiatan: pkmData.lokasi_kegiatan,
-      nomorSkPengesahan: pkmData.nomor_sk_pengesahan,
-      semesterAktif: semesterActive.semester,
-      tahunPelaksanaan: pkmData.tahun_pelaksanaan,
-      uploadDocument: pkmData.upload_document,
-    };
+  async getPkmById(
+    account: Account,
+    pkmId: number,
+  ): Promise<GetPkmByIdResponse> {
+    try {
+      const dosen = await this.prismaService.dosenAccount.findFirst({
+        where: {
+          account_id: account.uuid,
+        },
+      });
 
-    return pkmResponse;
+      const pkmData = await this.prismaService.pKM.findFirst({
+        where: {
+          AND: [{ id: pkmId }, { nidn: dosen.nidn }],
+        },
+      });
+      if (!pkmData) {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'pkm id not found',
+        };
+      }
+      const semesterActive = await this.prismaService.semesterAktif.findFirst({
+        where: {
+          status: 'active',
+        },
+      });
+      const pkmResponse: PkmResponse = {
+        id: pkmData.id,
+        NIDN: pkmData.nidn,
+        judul: pkmData.judul,
+        lamaKegiatan: pkmData.lama_kegiatan,
+        lokasiKegiatan: pkmData.lokasi_kegiatan,
+        nomorSkPengesahan: pkmData.nomor_sk_pengesahan,
+        semesterAktif: semesterActive.semester,
+        tahunPelaksanaan: pkmData.tahun_pelaksanaan,
+        uploadDocument: pkmData.upload_document,
+      };
+
+      return {
+        data: pkmResponse,
+        statusCode: 200,
+        message: 'success',
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        message: error.message || 'an error ocured',
+      };
+    }
   }
 
   async delete(account: Account, pkmId: number): Promise<BaseResponse> {

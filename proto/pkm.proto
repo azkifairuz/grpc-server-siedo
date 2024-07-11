@@ -7,7 +7,7 @@ service PkmDosenService {
     rpc GetListPkm (GetListPkmRequest) returns (GetListPkmResponse);
     rpc CreatePkm (CreatePkmRequest) returns (BaseResponse);
     rpc UpdatePkm (UpdatePkmRequest) returns (BaseResponse);
-    rpc GetPkmById (GetPkmByIdRequest) returns (PkmResponse);
+    rpc GetPkmById (GetPkmByIdRequest) returns (GetPkmByIdResponse);
     rpc DeletePkm (DeletePkmRequest) returns (BaseResponse);
 }
 
@@ -35,6 +35,12 @@ message PkmResponse {
   string upload_document = 9;
 }
 
+message GetPkmByIdResponse {
+    optional PkmResponse data = 1;
+    optional int32 status_code = 2;
+    optional string message = 3;
+}
+
 message PkmRequest {
   string judul = 1;
   string tahun_pelaksanaan = 2;
@@ -56,8 +62,8 @@ message GetListPkmRequest {
 }
 
 message GetListPkmResponse {
-  repeated PkmResponse data = 1;
-  PaginationData pagination = 2;
+   repeated PkmResponse data = 1;
+  optional PaginationData pagination = 2;
   int32 status_code = 3;
   string message = 4;
 }
