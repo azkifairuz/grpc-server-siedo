@@ -29,7 +29,7 @@ export class PkmDosenController implements PkmDosenServiceController {
     }
   }
 
-  @GrpcMethod('PkmDosenService', 'createPKm')
+  @GrpcMethod('PkmDosenService', 'createPkm')
   async createPkm(request: CreatePkmRequest): Promise<BaseResponse> {
     try {
       return await this.pkmDosenService.createPkm(
