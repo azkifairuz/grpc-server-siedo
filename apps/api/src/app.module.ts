@@ -5,6 +5,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { ProtoAuthModule } from './proto-auth/proto-auth.module';
 import { CommonModule } from 'apps/dosen/common/common.module';
+import { ProtoProfileModule } from './proto-profile/proto-profile.module';
 
 @Module({
   imports: [
@@ -18,8 +19,17 @@ import { CommonModule } from 'apps/dosen/common/common.module';
           protoPath: join(__dirname, '../auth.proto'),
         },
       },
+      {
+        name: 'profile',
+        transport: Transport.GRPC,
+        options: {
+          package: 'profile',
+          protoPath: join(__dirname, '../profile.proto'),
+        },
+      },
     ]),
     ProtoAuthModule,
+    ProtoProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
