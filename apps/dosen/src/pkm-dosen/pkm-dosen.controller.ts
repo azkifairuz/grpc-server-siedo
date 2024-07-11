@@ -42,7 +42,16 @@ export class PkmDosenController implements PkmDosenServiceController {
   }
   @GrpcMethod('PkmDosenService', 'getListPkm')
   async updatePkm(request: UpdatePkmRequest): Promise<BaseResponse> {
-    throw new Error('Method not implemented.');
+    try {
+      return await this.pkmDosenService.updatePkm(
+        request.account,
+        request.pkmRequest,
+        request.pkmId,
+        request.document,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
   @GrpcMethod('PkmDosenService', 'getListPkm')
   async getPkmById(request: GetPkmByIdRequest): Promise<PkmResponse> {

@@ -129,4 +129,55 @@ export class PkmDosenService {
       };
     }
   }
+  async updatePkm(
+    account: Account,
+    request: PkmRequest,
+    pkmId: number,
+    document: Uint8Array,
+  ): Promise<BaseResponse> {
+    try {
+      const dosen = await this.prismaService.dosenAccount.findFirst({
+        where: {
+          account_id: account.uuid,
+        },
+      });
+
+      const pkmRequest: PkmRequest = this.validationService.validate(
+        PkmValidation.PKM_SCHEMA,
+        request,
+      );
+
+      const semesterActive = await this.prismaService.semesterAktif.findFirst({
+        where: {
+          status: 'active',
+        },
+      });
+      const fileUrl = await uploadFile(document);
+      await this.prismaService.pKM.update({
+        where: {
+          id: pkmId,
+        },
+        data: {
+          judul: pkmRequest.judul,
+          lama_kegiatan: pkmRequest.lamaKegiatan,
+          lokasi_kegiatan: pkmRequest.lokasiKegiatan,
+          nomor_sk_pengesahan: pkmRequest.nomorSkPengesahan,
+          tahun_pelaksanaan: pkmRequest.tahunPelaksanaan,
+          upload_document: fileUrl,
+          nidn: dosen.nidn,
+          semesterAktif: semesterActive.id,
+        },
+      });
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'edit pkm success',
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        message: `server error: ${error}`,
+      };
+    }
+  }
 }
