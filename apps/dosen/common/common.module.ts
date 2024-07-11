@@ -2,6 +2,7 @@ import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from './prisma.service';
 import { AuthMiddlerware } from './auth.midleware';
+import { ValidationService } from './validation.service';
 @Global()
 @Module({
   imports: [
@@ -10,8 +11,8 @@ import { AuthMiddlerware } from './auth.midleware';
       envFilePath: ['.env'],
     }),
   ],
-  providers: [PrismaService],
-  exports: [PrismaService],
+  providers: [PrismaService, ValidationService],
+  exports: [PrismaService, ValidationService],
 })
 export class CommonModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
