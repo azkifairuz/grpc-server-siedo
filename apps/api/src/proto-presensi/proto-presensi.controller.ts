@@ -14,4 +14,9 @@ export class ProtoPresensiController {
   ) {
     return this.presensiService.presensiOffline(inLocation, account);
   }
+
+  @Post('/online')
+  presensiOnline(@Authentication() account: Account) {
+    return this.presensiService.presensiOnline(account);
+  }
 }

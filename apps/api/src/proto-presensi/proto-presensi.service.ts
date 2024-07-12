@@ -2,6 +2,7 @@ import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Account } from '@prisma/client';
 import {
+  IzinRequest,
   PRESENSI_SERVICE_NAME,
   PresensiOfflineRequest,
   PresensiServiceClient,
@@ -22,5 +23,9 @@ export class ProtoPresensiService implements OnModuleInit {
       inLocation,
     };
     return this.presensiClientService.presensiOffline(requestPresensiOffline);
+  }
+
+  presensiOnline(account: Account) {
+    return this.presensiClientService.presensiOnline(account);
   }
 }
