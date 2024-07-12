@@ -1,7 +1,14 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ProtoPresensiService } from './proto-presensi.service';
 import { Authentication } from 'apps/dosen/common/auth.decorator';
 import { Account } from '@prisma/client';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('dosen/presensi')
 export class ProtoPresensiController {
@@ -24,10 +31,12 @@ export class ProtoPresensiController {
     return this.presensiService.checkout(account);
   }
   @Post('/izin')
+  @UseInterceptors(FileInterceptor('document'))
   izin(
     @Authentication() account: Account,
-    @Body('reason') inLocation: boolean,
+    @Body('reason') reason: string,
+    @UploadedFile('document') document: Express.Multer.File,
   ) {
-    return this.presensiService.presensiOffline(inLocation, account);
+    return this.presensiService.izin(reason, document.buffer, account);
   }
 }
