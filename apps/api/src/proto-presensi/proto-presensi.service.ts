@@ -28,4 +28,8 @@ export class ProtoPresensiService implements OnModuleInit {
   presensiOnline(account: Account) {
     return this.presensiClientService.presensiOnline(account);
   }
+
+  checkout(account: Account) {
+    return this.presensiClientService.checkout(account);
+  }
 }

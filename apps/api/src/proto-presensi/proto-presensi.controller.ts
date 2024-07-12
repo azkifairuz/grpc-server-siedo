@@ -19,4 +19,9 @@ export class ProtoPresensiController {
   presensiOnline(@Authentication() account: Account) {
     return this.presensiService.presensiOnline(account);
   }
+  @Post('/checkout')
+  checkout(@Authentication() account: Account) {
+    return this.presensiService.checkout(account);
+  }
+
 }
