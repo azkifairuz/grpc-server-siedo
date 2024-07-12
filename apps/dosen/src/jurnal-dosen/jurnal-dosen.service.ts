@@ -2,11 +2,14 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Account } from '@prisma/client';
 import { PrismaService } from 'apps/dosen/common/prisma.service';
 import {
+  BaseResponse,
   GetJurnalByIdResponse,
   GetListJurnalResponse,
+  JurnalRequest,
   JurnalResponse,
   PaginationData,
 } from 'proto/jurnal';
+import { uploadFile } from 'utils/fileUploadBucket';
 
 @Injectable()
 export class JurnalDosenService {
@@ -140,6 +143,57 @@ export class JurnalDosenService {
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         message: `failed: ${error}`,
+      };
+    }
+  }
+
+  async createJurnal(
+    account: Account,
+    request: JurnalRequest,
+    document: Uint8Array,
+  ): Promise<BaseResponse> {
+    try {
+      const dosen = await this.prismaService.dosenAccount.findFirst({
+        where: {
+          account_id: account.uuid,
+        },
+        include: {
+          dosen: {},
+        },
+      });
+
+      const semesterActive = await this.prismaService.semesterAktif.findFirst({
+        where: {
+          status: 'active',
+        },
+      });
+
+      const file = await uploadFile(document);
+      await this.prismaService.jurnal.create({
+        data: {
+          nidn: dosen.nidn,
+          nama_jurnal: request.namaJurnal,
+          halaman: request.halaman,
+          ISSN: request.issn,
+          judul_artikel: request.judulArtikel,
+          nomor: request.nomor,
+          penerbit_penyelanggara: request.penerbitPenyelanggara,
+          tanggal_terbit: request.tanggalTerbit,
+          tatuan_laman_jurnal: request.tautanLamanJurnal,
+          upload_document: file,
+          volume: request.volume,
+          semesterAktif: semesterActive.id,
+        },
+      });
+
+      return {
+        message: 'succes create jurnal',
+        statusCode: HttpStatus.OK,
+      };
+    } catch (error) {
+      return {
+        message: `error: ${error}`,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       };
     }
   }
