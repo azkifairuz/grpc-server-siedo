@@ -281,4 +281,38 @@ export class JurnalDosenService {
       };
     }
   }
+
+  async delete(account: Account, jurnalId: number): Promise<BaseResponse> {
+    const dosen = await this.prismaService.dosenAccount.findFirst({
+      where: {
+        account_id: account.uuid,
+      },
+    });
+    if (!dosen) {
+      return {
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: 'failed dosen not found',
+      };
+    }
+    const isIdValid = await this.prismaService.jurnal.findFirst({
+      where: {
+        id: jurnalId,
+      },
+    });
+    if (!isIdValid) {
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'jurnal not found',
+      };
+    }
+    await this.prismaService.jurnal.delete({
+      where: {
+        id: jurnalId,
+      },
+    });
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'delete jurnal success',
+    };
+  }
 }
