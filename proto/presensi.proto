@@ -22,7 +22,7 @@ message PresensiOfflineRequest {
 }
 
 message PresensiOnlineRequest {
-    Account Account = 1;
+    Account account = 1;
 }
 
 message IzinRequest {

@@ -4,6 +4,6 @@ import { PresensiService } from './presensi.service';
 
 @Module({
   controllers: [PresensiController],
-  providers: [PresensiService]
+  providers: [PresensiService],
 })
 export class PresensiModule {}
