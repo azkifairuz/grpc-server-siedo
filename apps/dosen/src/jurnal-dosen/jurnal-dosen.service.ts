@@ -197,4 +197,88 @@ export class JurnalDosenService {
       };
     }
   }
+
+  async update(
+    request: JurnalRequest,
+    jurnalId: number,
+    account: Account,
+    document: Uint8Array,
+  ): Promise<BaseResponse> {
+    try {
+      const dosen = await this.prismaService.dosenAccount.findFirst({
+        where: {
+          account_id: account.uuid,
+        },
+        include: {
+          dosen: {},
+        },
+      });
+
+      const semesterActive = await this.prismaService.semesterAktif.findFirst({
+        where: {
+          status: 'active',
+        },
+      });
+      if (!semesterActive) {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Active semester not found',
+        };
+      }
+
+      const isAlreadyHaveFile = await this.prismaService.jurnal.findFirst({
+        where: {
+          AND: [{ nidn: dosen.nidn }, { id: jurnalId }],
+        },
+        select: {
+          upload_document: true,
+        },
+      });
+
+      if (!isAlreadyHaveFile) {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'jurnal data not found',
+        };
+      }
+      let fileUrl = isAlreadyHaveFile.upload_document;
+
+      if (document) {
+        fileUrl = await uploadFile(document);
+      }
+
+      if (isAlreadyHaveFile.upload_document == fileUrl) {
+        fileUrl = isAlreadyHaveFile.upload_document;
+      }
+
+      await this.prismaService.jurnal.update({
+        where: {
+          id: jurnalId,
+        },
+        data: {
+          nidn: dosen.nidn,
+          nama_jurnal: request.namaJurnal,
+          halaman: request.halaman,
+          ISSN: request.issn,
+          judul_artikel: request.judulArtikel,
+          nomor: request.nomor,
+          penerbit_penyelanggara: request.penerbitPenyelanggara,
+          tanggal_terbit: request.tanggalTerbit,
+          tatuan_laman_jurnal: request.tautanLamanJurnal,
+          upload_document: fileUrl,
+          volume: request.volume,
+          semesterAktif: semesterActive.id,
+        },
+      });
+      return {
+        message: 'succes update',
+        statusCode: HttpStatus.OK,
+      };
+    } catch (error) {
+      return {
+        message: `error: ${error}`,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      };
+    }
+  }
 }

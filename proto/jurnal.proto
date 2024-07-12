@@ -83,12 +83,14 @@ message GetJurnalByIdRequest {
 message CreateJurnalRequest {
     Account account = 1;
     JurnalRequest jurnalRequest = 2;
+    bytes document = 3;
 }
 
 message UpdateJurnalRequest {
     int32 jurnalId = 1;
     JurnalRequest jurnalRequest = 2;
     Account account = 3;
+    optional bytes document = 4;
 }
 
 message DeleteJurnalRequest {

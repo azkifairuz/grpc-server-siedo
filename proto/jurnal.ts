@@ -83,12 +83,14 @@ export interface GetJurnalByIdRequest {
 export interface CreateJurnalRequest {
   account: Account | undefined;
   jurnalRequest: JurnalRequest | undefined;
+  document: Uint8Array;
 }
 
 export interface UpdateJurnalRequest {
   jurnalId: number;
   jurnalRequest: JurnalRequest | undefined;
   account: Account | undefined;
+  document?: Uint8Array | undefined;
 }
 
 export interface DeleteJurnalRequest {

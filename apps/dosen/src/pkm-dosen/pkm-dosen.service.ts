@@ -193,15 +193,11 @@ export class PkmDosenService {
         };
       }
       let fileUrl = isAlreadyHaveFile.upload_document;
-      console.log('fileNameOld', fileUrl);
 
       if (document) {
         fileUrl = await uploadFile(document);
         console.log('fileNameNew', fileUrl);
       }
-      console.log('fileNameOld', isAlreadyHaveFile.upload_document);
-      console.log('fileNameNew', fileUrl);
-      console.log(isAlreadyHaveFile.upload_document != fileUrl);
 
       if (isAlreadyHaveFile.upload_document == fileUrl) {
         fileUrl = isAlreadyHaveFile.upload_document;
