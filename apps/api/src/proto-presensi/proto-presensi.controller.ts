@@ -35,7 +35,7 @@ export class ProtoPresensiController {
   izin(
     @Authentication() account: Account,
     @Body('reason') reason: string,
-    @UploadedFile('document') document: Express.Multer.File,
+    @UploadedFile() document: Express.Multer.File,
   ) {
     return this.presensiService.izin(reason, document.buffer, account);
   }
