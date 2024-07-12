@@ -1,9 +1,9 @@
 import { Controller } from '@nestjs/common';
 import {
+  Account,
   BaseResponse,
   IzinRequest,
   PresensiOfflineRequest,
-  PresensiOnlineRequest,
   PresensiServiceController,
 } from 'proto/presensi';
 import { Observable } from 'rxjs';
@@ -20,8 +20,8 @@ export class PresensiController implements PresensiServiceController {
   ): BaseResponse | Promise<BaseResponse> | Observable<BaseResponse> {
     try {
       return this.presensiService.presensiOffline(
-        request.account,
         request.inLocation,
+        request.account,
       );
     } catch (error) {
       throw new Error(error);
@@ -29,10 +29,20 @@ export class PresensiController implements PresensiServiceController {
   }
   @GrpcMethod('PresensiService', 'presensiOnline')
   presensiOnline(
-    request: PresensiOnlineRequest,
+    request: Account,
   ): BaseResponse | Promise<BaseResponse> | Observable<BaseResponse> {
     try {
-      return this.presensiService.presensiOnline(request.account);
+      return this.presensiService.presensiOnline(request);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+  @GrpcMethod('PresensiService', 'checkout')
+  checkout(
+    request: Account,
+  ): BaseResponse | Promise<BaseResponse> | Observable<BaseResponse> {
+    try {
+      return this.presensiService.checkout(request);
     } catch (error) {
       throw new Error(error);
     }

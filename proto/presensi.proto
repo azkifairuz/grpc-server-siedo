@@ -5,7 +5,8 @@ package presensi;
 
 service PresensiService {
     rpc PresensiOffline (PresensiOfflineRequest) returns (BaseResponse);
-    rpc PresensiOnline (PresensiOnlineRequest) returns (BaseResponse);
+    rpc PresensiOnline (Account) returns (BaseResponse);
+    rpc Checkout (Account) returns (BaseResponse);
     rpc Izin (IzinRequest) returns (BaseResponse);
 }
 
@@ -21,9 +22,6 @@ message PresensiOfflineRequest {
     Account account =2;
 }
 
-message PresensiOnlineRequest {
-    Account account = 1;
-}
 
 message IzinRequest {
     Account account =1;
