@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package presensi;
+
+message Account {
+    string uuid= 1;
+    string username= 2;
+    string password= 3;
+    string token= 4;
+}
+
+message PresensiOfflineRequest {
+    bool inLocation =1;
+    Account account =2;
+}
+
+message PresensiOnlineRequest {
+    Account Account = 1;
+}
+
+message IzinRequest {
+    Account account =1;
+    string reason =2;
+    bytes document =3;
+}
