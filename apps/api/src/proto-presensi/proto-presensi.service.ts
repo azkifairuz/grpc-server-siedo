@@ -32,4 +32,13 @@ export class ProtoPresensiService implements OnModuleInit {
   checkout(account: Account) {
     return this.presensiClientService.checkout(account);
   }
+
+  izin(reason: string, document: Uint8Array, account: Account) {
+    const requestIzin: IzinRequest = {
+      account,
+      reason,
+      document,
+    };
+    return this.presensiClientService.izin(requestIzin);
+  }
 }

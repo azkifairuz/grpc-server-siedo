@@ -23,5 +23,11 @@ export class ProtoPresensiController {
   checkout(@Authentication() account: Account) {
     return this.presensiService.checkout(account);
   }
-
+  @Post('/izin')
+  izin(
+    @Authentication() account: Account,
+    @Body('reason') inLocation: boolean,
+  ) {
+    return this.presensiService.presensiOffline(inLocation, account);
+  }
 }
