@@ -159,6 +159,65 @@ export class PresensiService {
       };
     }
   }
+  async checkout(account: Account): Promise<BaseResponse> {
+    try {
+      const dosen = await this.prismaService.dosenAccount.findFirst({
+        where: {
+          account_id: account.uuid,
+        },
+        include: {
+          dosen: true,
+        },
+      });
+      const date = new Date();
+      const currentDate = new Date().toISOString().split('T')[0];
 
- 
+      const today = date.toLocaleDateString('id-ID', { weekday: 'long' });
+      const isAlreadyCheckOut = await this.prismaService.riwayatMasuk.findFirst(
+        {
+          where: {
+            AND: [
+              {
+                tanggal: currentDate,
+              },
+              {
+                nidn: dosen.nidn,
+              },
+            ],
+          },
+          orderBy: {
+            jam: 'desc',
+          },
+        },
+      );
+
+      if (isAlreadyCheckOut != null) {
+        if (isAlreadyCheckOut.kegiatan == 'keluar') {
+          return {
+            statusCode: HttpStatus.BAD_REQUEST,
+            message: 'presensi failed: dosen already checkout',
+          };
+        }
+      }
+      await this.prismaService.riwayatMasuk.create({
+        data: {
+          hari: today.toString(),
+          jam: date.toLocaleTimeString('id-ID'),
+          tanggal: `${currentDate}`,
+          tipe: isAlreadyCheckOut.tipe,
+          nidn: dosen.nidn,
+          kegiatan: 'keluar',
+        },
+      });
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'checkout success',
+      };
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: `error: ${error}`,
+      };
+    }
+  }
 }
