@@ -220,4 +220,48 @@ export class PresensiService {
       };
     }
   }
+  async izin(
+    account: Account,
+    reason: string,
+    file: Uint8Array,
+  ): Promise<BaseResponse> {
+    try {
+      const fileUrl = await uploadFile(file);
+      const dosesnAcc = await this.prismaService.dosenAccount.findFirst({
+        where: {
+          account_id: account.uuid,
+        },
+      });
+      const currentDate = new Date().toISOString().split('T')[0];
+      const isAlreadyIzinToday = await this.prismaService.izin.findFirst({
+        where: {
+          tanggal: currentDate,
+        },
+      });
+      if (isAlreadyIzinToday) {
+        return {
+          statusCode: 400,
+          message: 'izin failed: dosen already izin today',
+        };
+      }
+
+      await this.prismaService.izin.create({
+        data: {
+          alasan: reason,
+          bukti: fileUrl,
+          nidn: dosesnAcc.nidn,
+          tanggal: currentDate,
+        },
+      });
+      return {
+        statusCode: HttpStatus.ACCEPTED,
+        message: 'izin success',
+      };
+    } catch (error) {
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: `izin failed: ${error}`,
+      };
+    }
+  }
 }
