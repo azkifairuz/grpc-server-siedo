@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package jurnal;
+
+
+service JurnalService {
+    rpc GetListJurnal (GetListJurnalRequest) returns (GetListJurnalResponse);
+    rpc GetJurnalById (GetJurnalByIdRequest) returns (GetJurnalByIdResponse);
+    rpc CreateJurnal (CreateJurnalRequest) returns (BaseResponse);
+    rpc UpdateJurnal (UpdateJurnalRequest) returns (BaseResponse);
+    rpc DeleteJurnal (DeleteJurnalRequest) returns (BaseResponse);
+
+}
+
+message JurnalResponse {
+    int32 id = 1;
+    string nidn = 2;
+    int32 semesterAktif = 3;
+    string judulArtikel = 4;
+    string namaJurnal = 5;
+    string tautanLamanJurnal = 6;
+    string tanggalTerbit = 7;
+    string volume = 8;
+    string nomor = 9;
+    string halaman = 10;
+    string penerbitPenyelanggara = 11;
+    string issn = 12;
+    string upload_document =  13;
+}
+message JurnalRequest {
+    string judulArtikel = 4;
+    string namaJurnal = 5;
+    string tautanLamanJurnal = 6;
+    string tanggalTerbit = 7;
+    string volume = 8;
+    string nomor = 9;
+    string halaman = 10;
+    string penerbitPenyelanggara = 11;
+    string issn = 12;
+}
+
+message BaseResponse {
+    int32 statusCode = 1;
+    string message = 2;
+}
+
+message Account {
+    string uuid= 1;
+    string username= 2;
+    string password= 3;
+    string token= 4;
+}
+message PaginationData {
+    int32 page = 1;
+    int32 size = 2;
+    optional int32 total_page = 3;
+    optional int32 total_data = 4;
+  }
+
+message GetListJurnalRequest {
+    Account account = 1;
+    int32 page = 2;
+}
+
+message GetListJurnalResponse {
+    repeated JurnalResponse data =1;
+    optional PaginationData pagination =2;
+    int32 status_code = 3;
+    string message = 4;
+}
+
+message GetJurnalByIdResponse {
+    optional JurnalResponse data = 1;
+    optional int32 status_code = 2;
+    optional string message = 3;
+}
+
+message GetJurnalByIdRequest {
+    int32 jurnalId = 1;
+    Account account = 2;
+}
+
+message CreateJurnalRequest {
+    Account account = 1;
+    JurnalRequest jurnalRequest = 2;
+}
+
+
+message UpdateJurnalRequest {
+    int32 jurnalId = 1;
+    JurnalRequest jurnalRequest = 2;
+    Account account = 3;
+}
+
+message DeleteJurnalRequest {
+    int32 jurnalId = 1;
+    Account account = 2; 
+}
+
+
+
+
+

@@ -5,6 +5,7 @@ import { AuthDosenModule } from './auth-dosen/auth-dosen.module';
 import { ProfileModule } from './profile/profile.module';
 import { PkmDosenModule } from './pkm-dosen/pkm-dosen.module';
 import { PresensiModule } from './presensi/presensi.module';
+import { JurnalDosenModule } from './jurnal-dosen/jurnal-dosen.module';
 @Module({
   imports: [
     CommonModule,
@@ -13,6 +14,7 @@ import { PresensiModule } from './presensi/presensi.module';
     ProfileModule,
     PkmDosenModule,
     PresensiModule,
+    JurnalDosenModule,
   ],
   controllers: [],
   providers: [],
