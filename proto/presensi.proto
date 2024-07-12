@@ -2,6 +2,13 @@ syntax = "proto3";
 
 package presensi;
 
+
+service PresensiService {
+    rpc PresensiOffline (PresensiOfflineRequest) returns (BaseResponse);
+    rpc PresensiOnline (PresensiOnlineRequest) returns (BaseResponse);
+    rpc Izin (IzinRequest) returns (BaseResponse);
+}
+
 message Account {
     string uuid= 1;
     string username= 2;
@@ -22,4 +29,9 @@ message IzinRequest {
     Account account =1;
     string reason =2;
     bytes document =3;
+}
+
+message BaseResponse {
+    int32 statusCode =1;
+    string message =2;
 }
