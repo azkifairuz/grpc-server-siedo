@@ -44,6 +44,7 @@ export class PkmDosenService {
           semesterAktif: semesterActive.id,
         },
       });
+
       const totalPages = Math.ceil(totalCount / 10);
       const pkmList = await this.prismaService.pKM.findMany({
         take: 10,
@@ -69,12 +70,14 @@ export class PkmDosenService {
         tahunPelaksanaan: pkm.tahun_pelaksanaan,
         uploadDocument: pkm.upload_document,
       }));
+
       const PaginationData: PaginationData = {
         page,
         size: 10,
         totalData: totalCount,
         totalPage: totalPages,
       };
+
       return {
         data: pkmResponse,
         pagination: PaginationData,
@@ -95,6 +98,7 @@ export class PkmDosenService {
       };
     }
   }
+
   async createPkm(
     account: Account,
     request: PkmRequest,
@@ -142,6 +146,7 @@ export class PkmDosenService {
       };
     }
   }
+
   async updatePkm(
     account: Account,
     request: PkmRequest,

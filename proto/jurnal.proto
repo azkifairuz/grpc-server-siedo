@@ -85,7 +85,6 @@ message CreateJurnalRequest {
     JurnalRequest jurnalRequest = 2;
 }
 
-
 message UpdateJurnalRequest {
     int32 jurnalId = 1;
     JurnalRequest jurnalRequest = 2;
