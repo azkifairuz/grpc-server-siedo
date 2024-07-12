@@ -7,6 +7,7 @@ import { ProtoAuthModule } from './proto-auth/proto-auth.module';
 import { CommonModule } from 'apps/dosen/common/common.module';
 import { ProtoProfileModule } from './proto-profile/proto-profile.module';
 import { ProtoPkmModule } from './proto-pkm/proto-pkm.module';
+import { ProtoPresensiModule } from './proto-presensi/proto-presensi.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ProtoPkmModule } from './proto-pkm/proto-pkm.module';
     ProtoAuthModule,
     ProtoProfileModule,
     ProtoPkmModule,
+    ProtoPresensiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
