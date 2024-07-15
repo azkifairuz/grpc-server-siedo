@@ -14,8 +14,9 @@ async function bootstrap() {
           join(__dirname, '../profile.proto'),
           join(__dirname, '../pkm.proto'),
           join(__dirname, '../presensi.proto'),
+          join(__dirname, '../jurnal.proto'),
         ],
-        package: ['auth', 'profile', 'pkm', 'presensi'],
+        package: ['auth', 'profile', 'pkm', 'presensi', 'jurnal'],
       },
     },
   );

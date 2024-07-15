@@ -8,6 +8,9 @@ import { CommonModule } from 'apps/dosen/common/common.module';
 import { ProtoProfileModule } from './proto-profile/proto-profile.module';
 import { ProtoPkmModule } from './proto-pkm/proto-pkm.module';
 import { ProtoPresensiModule } from './proto-presensi/proto-presensi.module';
+import { ProtoJurnalModule } from './proto-jurnal/proto-jurnal.module';
+import { ProtoJurnalService } from './proto-jurnal/proto-jurnal.service';
+import { ProtoJurnalController } from './proto-jurnal/proto-jurnal.controller';
 
 @Module({
   imports: [
@@ -37,13 +40,22 @@ import { ProtoPresensiModule } from './proto-presensi/proto-presensi.module';
           protoPath: join(__dirname, '../pkm.proto'),
         },
       },
+      {
+        name: 'jurnal',
+        transport: Transport.GRPC,
+        options: {
+          package: 'jurnal',
+          protoPath: join(__dirname, '../jurnal.proto'),
+        },
+      },
     ]),
     ProtoAuthModule,
     ProtoProfileModule,
     ProtoPkmModule,
     ProtoPresensiModule,
+    ProtoJurnalModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, ProtoJurnalController],
+  providers: [AppService, ProtoJurnalService],
 })
 export class AppModule {}
