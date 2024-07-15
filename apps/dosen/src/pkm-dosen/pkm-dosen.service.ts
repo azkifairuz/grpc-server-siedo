@@ -58,7 +58,19 @@ export class PkmDosenService {
           ],
         },
       });
-
+      if (!pkmList.length) {
+        return {
+          data: [],
+          pagination: {
+            page,
+            size: 10,
+            totalData: totalCount,
+            totalPage: totalPages,
+          },
+          statusCode: HttpStatus.OK,
+          message: 'No jurnal data found.',
+        };
+      }
       const pkmResponse: PkmResponse[] = pkmList.map((pkm) => ({
         id: pkm.id,
         NIDN: pkm.nidn,

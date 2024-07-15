@@ -53,7 +53,19 @@ export class JurnalDosenService {
           ],
         },
       });
-
+      if (!jurnalList.length) {
+        return {
+          data: [],
+          pagination: {
+            page,
+            size: 10,
+            totalData: totalCount,
+            totalPage: totalPages,
+          },
+          statusCode: HttpStatus.OK,
+          message: 'No jurnal data found.',
+        };
+      }
       const jurnalResponse: JurnalResponse[] = jurnalList.map((jurnal) => ({
         id: jurnal.id,
         nidn: jurnal.nidn,
