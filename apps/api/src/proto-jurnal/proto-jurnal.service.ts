@@ -3,6 +3,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { Account } from '@prisma/client';
 import {
   CreateJurnalRequest,
+  DeleteJurnalRequest,
   GetJurnalByIdRequest,
   GetListJurnalRequest,
   JURNAL_SERVICE_NAME,
@@ -33,7 +34,7 @@ export class ProtoJurnalService implements OnModuleInit {
 
   updateJurnal(
     account: Account,
-    jurnalId: number = 1,
+    jurnalId: number,
     jurnalRequest: JurnalRequest,
     document: Uint8Array,
   ) {
@@ -57,5 +58,11 @@ export class ProtoJurnalService implements OnModuleInit {
       jurnalRequest,
     };
     return this.jurnalClientService.createJurnal(createJurnalRequest);
+  }
+
+  deleteJurnal(account: Account, jurnalId: number) {
+    const deleteJurnalRequest: DeleteJurnalRequest = { account, jurnalId };
+
+    return this.jurnalClientService.deleteJurnal(deleteJurnalRequest);
   }
 }
