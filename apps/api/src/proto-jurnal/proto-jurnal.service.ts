@@ -2,6 +2,7 @@ import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Account } from '@prisma/client';
 import {
+  GetJurnalByIdRequest,
   GetListJurnalRequest,
   JURNAL_SERVICE_NAME,
   JurnalServiceClient,
@@ -22,5 +23,8 @@ export class ProtoJurnalService implements OnModuleInit {
     return this.jurnalClientService.getListJurnal(getRequest);
   }
 
-  
+  getBydId(account: Account, jurnalId: number = 1) {
+    const getByIdRequest: GetJurnalByIdRequest = { account, jurnalId };
+    return this.jurnalClientService.getJurnalById(getByIdRequest);
+  }
 }
