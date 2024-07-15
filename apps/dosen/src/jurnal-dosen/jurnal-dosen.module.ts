@@ -4,6 +4,6 @@ import { JurnalDosenService } from './jurnal-dosen.service';
 
 @Module({
   controllers: [JurnalDosenController],
-  providers: [JurnalDosenService]
+  providers: [JurnalDosenService],
 })
 export class JurnalDosenModule {}
