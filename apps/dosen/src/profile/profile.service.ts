@@ -111,7 +111,6 @@ export class ProfileService {
           dosen: {},
         },
       });
-
       const totalData = await this.prismaService.dosenJadwal.count({
         where: {
           dosen_id: dosenAccount.nidn,
@@ -123,6 +122,74 @@ export class ProfileService {
         skip: (page - 1) * 10,
         where: {
           dosen_id: dosenAccount.nidn,
+        },
+        include: {
+          jadwal: true,
+        },
+      });
+      const totalPages = Math.ceil(totalData / 10);
+      const pagination: PaginationData = {
+        page,
+        size: 10,
+        totalData: totalData,
+        totalPage: totalPages,
+      };
+      const semesterAktif = await this.prismaService.semesterAktif.findFirst({
+        where: {
+          status: 'active',
+        },
+      });
+
+      const dataJadwal: JadwalDosen[] = data.map((jadwal) => ({
+        mataKuliah: jadwal.jadwal.mata_kuliah,
+        hari: jadwal.hari,
+        semesterAktif: semesterAktif.semester,
+        tahunAjaran: jadwal.jadwal.tahun_ajaran,
+        kelas: jadwal.kelas,
+      }));
+
+      return {
+        data: dataJadwal,
+        pagination: pagination,
+        message: 'succes get jadwal',
+        statusCode: 200,
+      };
+    } catch (error) {
+      return {
+        data: [],
+        message: `error: ${error}`,
+        statusCode: 500,
+      };
+    }
+  }
+
+  async getJadwalDaily(
+    account: Account,
+    page: number = 1,
+  ): Promise<JadwalDosenResponse> {
+    try {
+      const dosenAccount = await this.prismaService.dosenAccount.findFirst({
+        where: {
+          account_id: account.uuid,
+        },
+        include: {
+          dosen: {},
+        },
+      });
+      const date = new Date();
+
+      const today = date.toLocaleDateString('id-ID', { weekday: 'long' });
+      const totalData = await this.prismaService.dosenJadwal.count({
+        where: {
+          AND: [{ dosen_id: dosenAccount.nidn }, { hari: today }],
+        },
+      });
+
+      const data = await this.prismaService.dosenJadwal.findMany({
+        take: 10,
+        skip: (page - 1) * 10,
+        where: {
+          AND: [{ dosen_id: dosenAccount.nidn }, { hari: today }],
         },
         include: {
           jadwal: true,
