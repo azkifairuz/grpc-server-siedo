@@ -40,6 +40,33 @@ export interface ProfileDosenRequest {
   alamatSurel: string;
 }
 
+export interface JadwalDosen {
+  mataKuliah: string;
+  hari: string;
+  kelas: string;
+  tahunAjaran: string;
+  semesterAktif: string;
+}
+
+export interface JadwalDosenRequest {
+  account: Account | undefined;
+  page: number;
+}
+
+export interface JadwalDosenResponse {
+  data: JadwalDosen[];
+  pagination?: PaginationData | undefined;
+  statusCode: number;
+  message: string;
+}
+
+export interface PaginationData {
+  page: number;
+  size: number;
+  totalPage?: number | undefined;
+  totalData?: number | undefined;
+}
+
 export interface UpdateProfileRequest {
   account: Account | undefined;
   request: ProfileDosenRequest | undefined;
@@ -57,17 +84,29 @@ export interface ProfileDosenClient {
   getProfile(request: Account): Observable<BaseResponse>;
 
   updateProfile(request: UpdateProfileRequest): Observable<BaseResponse>;
+
+  getJadwalDosen(request: JadwalDosenRequest): Observable<JadwalDosenResponse>;
+
+  getJadwalDosenDaily(request: JadwalDosenRequest): Observable<JadwalDosenResponse>;
 }
 
 export interface ProfileDosenController {
   getProfile(request: Account): Promise<BaseResponse> | Observable<BaseResponse> | BaseResponse;
 
   updateProfile(request: UpdateProfileRequest): Promise<BaseResponse> | Observable<BaseResponse> | BaseResponse;
+
+  getJadwalDosen(
+    request: JadwalDosenRequest,
+  ): Promise<JadwalDosenResponse> | Observable<JadwalDosenResponse> | JadwalDosenResponse;
+
+  getJadwalDosenDaily(
+    request: JadwalDosenRequest,
+  ): Promise<JadwalDosenResponse> | Observable<JadwalDosenResponse> | JadwalDosenResponse;
 }
 
 export function ProfileDosenControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getProfile", "updateProfile"];
+    const grpcMethods: string[] = ["getProfile", "updateProfile", "getJadwalDosen", "getJadwalDosenDaily"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("ProfileDosen", method)(constructor.prototype[method], method, descriptor);

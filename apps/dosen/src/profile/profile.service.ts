@@ -2,7 +2,13 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 import { ValidationService } from '../../common/validation.service';
 import { Account } from '@prisma/client';
-import { BaseResponse, ProfileDosenRequest } from 'proto/profile';
+import {
+  BaseResponse,
+  JadwalDosen,
+  JadwalDosenResponse,
+  PaginationData,
+  ProfileDosenRequest,
+} from 'proto/profile';
 import { DosenProfileValidation } from './dosen-profile.validate';
 
 @Injectable()
@@ -88,6 +94,72 @@ export class ProfileService {
       return {
         statusCode: 500,
         message: `error:${error} `,
+      };
+    }
+  }
+
+  async getJadwalAll(
+    account: Account,
+    page: number = 1,
+  ): Promise<JadwalDosenResponse> {
+    try {
+      const dosenAccount = await this.prismaService.dosenAccount.findFirst({
+        where: {
+          account_id: account.uuid,
+        },
+        include: {
+          dosen: {},
+        },
+      });
+
+      const totalData = await this.prismaService.dosenJadwal.count({
+        where: {
+          dosen_id: dosenAccount.nidn,
+        },
+      });
+
+      const data = await this.prismaService.dosenJadwal.findMany({
+        take: 10,
+        skip: (page - 1) * 10,
+        where: {
+          dosen_id: dosenAccount.nidn,
+        },
+        include: {
+          jadwal: true,
+        },
+      });
+      const totalPages = Math.ceil(totalData / 10);
+      const pagination: PaginationData = {
+        page,
+        size: 10,
+        totalData: totalData,
+        totalPage: totalPages,
+      };
+      const semesterAktif = await this.prismaService.semesterAktif.findFirst({
+        where: {
+          status: 'active',
+        },
+      });
+
+      const dataJadwal: JadwalDosen[] = data.map((jadwal) => ({
+        mataKuliah: jadwal.jadwal.mata_kuliah,
+        hari: jadwal.hari,
+        semesterAktif: semesterAktif.semester,
+        tahunAjaran: jadwal.jadwal.tahun_ajaran,
+        kelas: jadwal.kelas,
+      }));
+
+      return {
+        data: dataJadwal,
+        pagination: pagination,
+        message: 'succes get jadwal',
+        statusCode: 200,
+      };
+    } catch (error) {
+      return {
+        data: [],
+        message: `error: ${error}`,
+        statusCode: 500,
       };
     }
   }
