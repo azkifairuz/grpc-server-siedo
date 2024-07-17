@@ -2,6 +2,7 @@ import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Account } from '@prisma/client';
 import {
+  GetActivityRequest,
   IzinRequest,
   PRESENSI_SERVICE_NAME,
   PresensiOfflineRequest,
@@ -40,5 +41,13 @@ export class ProtoPresensiService implements OnModuleInit {
       document,
     };
     return this.presensiClientService.izin(requestIzin);
+  }
+  getActivity(filter: string, page: number = 1, account: Account) {
+    const activityRequest: GetActivityRequest = {
+      account,
+      filter,
+      page,
+    };
+    return this.presensiClientService.getActivity(activityRequest);
   }
 }

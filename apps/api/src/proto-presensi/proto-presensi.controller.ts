@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -38,5 +41,14 @@ export class ProtoPresensiController {
     @UploadedFile() document: Express.Multer.File,
   ) {
     return this.presensiService.izin(reason, document.buffer, account);
+  }
+
+  @Get('activity')
+  activity(
+    @Authentication() account: Account,
+    @Param('filter') filter: string,
+    @Query('page') page: string,
+  ) {
+    return this.presensiService.getActivity(filter, parseInt(page), account);
   }
 }
