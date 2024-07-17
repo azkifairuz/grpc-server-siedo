@@ -1,8 +1,14 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Account } from '@prisma/client';
 import { PrismaService } from 'apps/dosen/common/prisma.service';
-import { BaseResponse } from 'proto/presensi';
+import {
+  Activity,
+  BaseResponse,
+  GetActivityResponse,
+  PaginationData,
+} from 'proto/presensi';
 import { uploadFile } from 'utils/fileUploadBucket';
+import { formatDateString } from 'utils/formatDate';
 
 @Injectable()
 export class PresensiService {
@@ -159,6 +165,7 @@ export class PresensiService {
       };
     }
   }
+
   async checkout(account: Account): Promise<BaseResponse> {
     try {
       const dosen = await this.prismaService.dosenAccount.findFirst({
@@ -220,6 +227,7 @@ export class PresensiService {
       };
     }
   }
+
   async izin(
     account: Account,
     reason: string,
@@ -261,6 +269,85 @@ export class PresensiService {
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         message: `izin failed: ${error}`,
+      };
+    }
+  }
+
+  async getActivity(
+    account: Account,
+    filter: string,
+    page: number = 1,
+  ): Promise<GetActivityResponse> {
+    try {
+      const dosesnAcc = await this.prismaService.dosenAccount.findFirst({
+        where: {
+          account_id: account.uuid,
+        },
+      });
+      let dateFilter: any = {};
+      const currentDate = new Date();
+      const dayStart = new Date().toISOString().split('T')[0];
+
+      if (filter == 'daily') {
+        dateFilter = {
+          tanggal: dayStart,
+        };
+      } else if (filter === 'weekly') {
+        // Weekly filter: Get all records for the current week
+        const firstDayOfWeek = new Date(
+          currentDate.setDate(currentDate.getDate() - currentDate.getDay()),
+        );
+        const lastDayOfWeek = new Date(
+          currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 6),
+        );
+        dateFilter = {
+          tanggal: {
+            gte: firstDayOfWeek.toISOString().split('T')[0], // Adjust date format if needed
+            lte: lastDayOfWeek.toISOString().split('T')[0], // Adjust date format if needed
+          },
+        };
+      }
+      console.log(dateFilter);
+
+      const totalCount = await this.prismaService.riwayatMasuk.count({
+        where: {
+          nidn: dosesnAcc.nidn,
+          ...dateFilter,
+        },
+      });
+      const totalPages = Math.ceil(totalCount / 10);
+      const activityDosen = await this.prismaService.riwayatMasuk.findMany({
+        take: 10,
+        skip: (page - 1) * 10,
+        where: {
+          nidn: dosesnAcc.nidn,
+          ...dateFilter,
+        },
+      });
+      const data: Activity[] = activityDosen.map((activity) => ({
+        activity: activity.kegiatan,
+        date: `${activity.hari}, ${formatDateString(activity.tanggal)}`,
+        location: activity.tipe,
+        time: activity.jam,
+      }));
+
+      const PaginationData: PaginationData = {
+        page,
+        size: 10,
+        totalData: totalCount,
+        totalPage: totalPages,
+      };
+      return {
+        data: data,
+        pagination: PaginationData,
+        message: 'success get log activity',
+        statusCode: 200,
+      };
+    } catch (error) {
+      return {
+        data: [],
+        message: `error: ${error}`,
+        statusCode: 200,
       };
     }
   }
