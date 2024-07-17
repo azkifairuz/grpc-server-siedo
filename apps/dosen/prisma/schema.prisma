@@ -80,7 +80,7 @@ model Pendidikan {
 }
 
 model SemesterAktif {
-  id         Int      @id @default(autoincrement())
+  id         Int            @id @default(autoincrement())
   semester   String
   tahun_ajar String
   status     StatusSemester
@@ -103,10 +103,12 @@ enum Tipe {
   online
   offline
 }
+
 enum StatusSemester {
   active
   inactive
 }
+
 enum Kegiatan {
   masuk
   keluar
@@ -126,9 +128,7 @@ model ThriDarma {
 
 model Jadwal {
   id           Int           @id @default(autoincrement())
-  mata_kuliah  Int
-  kelas        String
-  hari         String
+  mata_kuliah  String
   tahun_ajaran String
   DosenJadwal  DosenJadwal[]
 }
@@ -137,8 +137,10 @@ model DosenJadwal {
   id        Int    @id @default(autoincrement())
   jadwal_id Int
   dosen_id  String
-  jadwal    Jadwal @relation(fields: [jadwal_id], references: [id])
-  dosen     Dosen  @relation(fields: [dosen_id], references: [nidn])
+  hari      String
+  kelas     String
+  jadwal Jadwal @relation(fields: [jadwal_id], references: [id])
+  dosen  Dosen  @relation(fields: [dosen_id], references: [nidn])
 }
 
 model Izin {
@@ -146,7 +148,7 @@ model Izin {
   nidn    String
   alasan  String
   bukti   String
-  tanggal String 
+  tanggal String
   dosen   Dosen  @relation(fields: [nidn], references: [nidn])
 }
 

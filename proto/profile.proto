@@ -5,6 +5,8 @@ package profile;
 service ProfileDosen {
     rpc GetProfile (Account) returns (BaseResponse);
     rpc UpdateProfile (UpdateProfileRequest) returns (BaseResponse);
+    rpc GetJadwalDosen (JadwalDosenRequest) returns (JadwalDosenResponse);
+    rpc GetJadwalDosenDaily (JadwalDosenRequest) returns (JadwalDosenResponse);
 }
 
 
@@ -28,16 +30,41 @@ message Account {
 }
 
 message ProfileDosenRequest {
-    string nama = 2;
-    string programStudi =3 ;
-    string jenjangPendidikan = 4;
-    string jenisKelamin = 5;
-    string tanggalLahir = 6;
-    string jabatanAkademik = 7 ;
-    string noTelephone = 8;
-    string alamatSurel = 9;
+    string nama = 1;
+    string programStudi =2 ;
+    string jenjangPendidikan = 3;
+    string jenisKelamin = 4;
+    string tanggalLahir = 5;
+    string jabatanAkademik = 6 ;
+    string noTelephone = 7;
+    string alamatSurel = 8;
+}
+message JadwalDosen {
+    string mataKuliah = 1;
+    string hari = 2;
+    string kelas = 3;
+    string tahunAjaran =4;
+    string semesterAktif = 5;
 }
 
+message JadwalDosenRequest {
+    Account account = 1;
+    int32 page = 2;
+}
+
+message JadwalDosenResponse {
+    repeated JadwalDosen data = 1;
+    optional PaginationData pagination = 2;
+    int32 statusCode = 3;
+    string message = 4;
+}
+
+message PaginationData {
+    int32 page = 1;
+    int32 size = 2;
+    optional int32 total_page = 3;
+    optional int32 total_data = 4;
+}
 message UpdateProfileRequest {
     Account account = 1;
     ProfileDosenRequest request = 2;

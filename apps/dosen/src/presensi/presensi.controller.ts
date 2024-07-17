@@ -8,7 +8,6 @@ import {
   PresensiOfflineRequest,
   PresensiServiceController,
 } from 'proto/presensi';
-import { Observable } from 'rxjs';
 import { PresensiService } from './presensi.service';
 import { GrpcMethod } from '@nestjs/microservices';
 
@@ -17,9 +16,9 @@ export class PresensiController implements PresensiServiceController {
   constructor(private readonly presensiService: PresensiService) {}
 
   @GrpcMethod('PresensiService', 'presensiOffline')
-  presensiOffline(
+  async presensiOffline(
     request: PresensiOfflineRequest,
-  ): BaseResponse | Promise<BaseResponse> | Observable<BaseResponse> {
+  ): Promise<BaseResponse> {
     try {
       return this.presensiService.presensiOffline(
         request.inLocation,
@@ -30,9 +29,7 @@ export class PresensiController implements PresensiServiceController {
     }
   }
   @GrpcMethod('PresensiService', 'presensiOnline')
-  presensiOnline(
-    request: Account,
-  ): BaseResponse | Promise<BaseResponse> | Observable<BaseResponse> {
+  async presensiOnline(request: Account): Promise<BaseResponse> {
     try {
       return this.presensiService.presensiOnline(request);
     } catch (error) {
@@ -40,9 +37,7 @@ export class PresensiController implements PresensiServiceController {
     }
   }
   @GrpcMethod('PresensiService', 'checkout')
-  checkout(
-    request: Account,
-  ): BaseResponse | Promise<BaseResponse> | Observable<BaseResponse> {
+  async checkout(request: Account): Promise<BaseResponse> {
     try {
       return this.presensiService.checkout(request);
     } catch (error) {
@@ -50,9 +45,7 @@ export class PresensiController implements PresensiServiceController {
     }
   }
   @GrpcMethod('PresensiService', 'izin')
-  izin(
-    request: IzinRequest,
-  ): BaseResponse | Promise<BaseResponse> | Observable<BaseResponse> {
+  async izin(request: IzinRequest): Promise<BaseResponse> {
     try {
       return this.presensiService.izin(
         request.account,
@@ -65,7 +58,7 @@ export class PresensiController implements PresensiServiceController {
   }
 
   @GrpcMethod('PresensiService', 'getActivity')
-  getActivity(request: GetActivityRequest): Promise<GetActivityResponse> {
+  async getActivity(request: GetActivityRequest): Promise<GetActivityResponse> {
     try {
       return this.presensiService.getActivity(
         request.account,
