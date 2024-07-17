@@ -8,6 +8,7 @@ service PresensiService {
     rpc PresensiOnline (Account) returns (BaseResponse);
     rpc Checkout (Account) returns (BaseResponse);
     rpc Izin (IzinRequest) returns (BaseResponse);
+    rpc GetActivity (GetActivityRequest) returns (GetActivityResponse);
 }
 
 message Account {
@@ -23,6 +24,31 @@ message PresensiOfflineRequest {
 }
 
 
+message Activity {
+    string location = 1;
+    string date = 2;
+    string activity = 3;
+}
+
+message PaginationData {
+    int32 page = 1;
+    int32 size = 2;
+    optional int32 total_page = 3;
+    optional int32 total_data = 4;
+}
+
+message GetActivityRequest {
+    int32 page = 1;
+    string filter = 2;
+    Account account = 3;
+}
+
+message GetActivityResponse {
+    repeated Activity data = 1;
+    optional PaginationData pagination = 2;
+    int32 statusCode = 3;
+    string message = 4;
+}
 message IzinRequest {
     Account account =1;
     string reason =2;
