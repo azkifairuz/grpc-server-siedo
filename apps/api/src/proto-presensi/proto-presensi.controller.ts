@@ -43,7 +43,7 @@ export class ProtoPresensiController {
     return this.presensiService.izin(reason, document.buffer, account);
   }
 
-  @Get('activity')
+  @Get('activity/:filter')
   activity(
     @Authentication() account: Account,
     @Param('filter') filter: string,

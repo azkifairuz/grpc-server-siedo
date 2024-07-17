@@ -64,7 +64,7 @@ export class PresensiController implements PresensiServiceController {
     }
   }
 
-  @GrpcMethod('PersensiService', 'getActivity')
+  @GrpcMethod('PresensiService', 'getActivity')
   getActivity(request: GetActivityRequest): Promise<GetActivityResponse> {
     try {
       return this.presensiService.getActivity(

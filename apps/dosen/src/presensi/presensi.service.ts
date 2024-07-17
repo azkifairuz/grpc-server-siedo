@@ -286,11 +286,11 @@ export class PresensiService {
       });
       let dateFilter: any = {};
       const currentDate = new Date();
-      const dayStart = new Date(currentDate.setHours(0, 0, 0, 0));
+      const dayStart = new Date().toISOString().split('T')[0];
 
       if (filter == 'daily') {
         dateFilter = {
-          tanggal: dayStart.toISOString().split('T')[0],
+          tanggal: dayStart,
         };
       } else if (filter === 'weekly') {
         // Weekly filter: Get all records for the current week

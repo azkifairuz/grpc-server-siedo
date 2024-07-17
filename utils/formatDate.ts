@@ -16,5 +16,5 @@ export function formatDateString(dateString: string): string {
     'Desember',
   ];
 
-  return `${day} ${months[month - 1]} ${year}`;
+  return ` ${year} ${months[month - 1]} ${day}`;
 }
