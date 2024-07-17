@@ -2,6 +2,8 @@ import { Controller } from '@nestjs/common';
 import {
   Account,
   BaseResponse,
+  GetActivityRequest,
+  GetActivityResponse,
   IzinRequest,
   PresensiOfflineRequest,
   PresensiServiceController,
@@ -56,6 +58,19 @@ export class PresensiController implements PresensiServiceController {
         request.account,
         request.reason,
         request.document,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @GrpcMethod('PersensiService', 'getActivity')
+  getActivity(request: GetActivityRequest): Promise<GetActivityResponse> {
+    try {
+      return this.presensiService.getActivity(
+        request.account,
+        request.filter,
+        request.page,
       );
     } catch (error) {
       throw new Error(error);

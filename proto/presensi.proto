@@ -28,6 +28,7 @@ message Activity {
     string location = 1;
     string date = 2;
     string activity = 3;
+    string time = 4;
 }
 
 message PaginationData {
