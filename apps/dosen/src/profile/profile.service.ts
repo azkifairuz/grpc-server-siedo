@@ -27,6 +27,25 @@ export class ProfileService {
           dosen: {},
         },
       });
+      const currentDate = new Date().toLocaleDateString('id-ID').split('T')[0];
+
+      const isAlreadyPresensi = await this.prismaService.riwayatMasuk.findFirst(
+        {
+          where: {
+            AND: [
+              {
+                tanggal: currentDate,
+              },
+              {
+                nidn: dosenAccount.nidn,
+              },
+            ],
+          },
+          orderBy: {
+            jam: 'desc',
+          },
+        },
+      );
 
       return {
         statusCode: HttpStatus.OK,
@@ -41,6 +60,7 @@ export class ProfileService {
           tanggalLahir: dosenAccount.dosen.tanggal_lahir.toISOString(),
           noTelephone: dosenAccount.dosen.no_telephone,
           programStudi: dosenAccount.dosen.program_studi,
+          isAlreadyPresensi: isAlreadyPresensi.kegiatan !== 'keluar',
         },
       };
     } catch (error) {

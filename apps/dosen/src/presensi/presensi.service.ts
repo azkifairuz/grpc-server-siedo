@@ -35,7 +35,7 @@ export class PresensiService {
         },
       });
       const date = new Date();
-      const currentDate = new Date().toISOString().split('T')[0];
+      const currentDate = new Date().toLocaleDateString('id-ID').split('T')[0];
 
       const today = date.toLocaleDateString('id-ID', { weekday: 'long' });
       const isAlreadyIzinToday = await this.prismaService.izin.findFirst({
@@ -84,6 +84,7 @@ export class PresensiService {
         },
       });
       return {
+        time: date.toLocaleTimeString('id-ID'),
         statusCode: HttpStatus.OK,
         message: 'presensi success',
       };
@@ -106,7 +107,7 @@ export class PresensiService {
         },
       });
       const date = new Date();
-      const currentDate = new Date().toISOString().split('T')[0];
+      const currentDate = new Date().toLocaleDateString('id-ID').split('T')[0];
 
       const today = date.toLocaleDateString('id-ID', { weekday: 'long' });
       const isAlreadyIzinToday = await this.prismaService.izin.findFirst({
@@ -155,6 +156,7 @@ export class PresensiService {
         },
       });
       return {
+        time: date.toLocaleTimeString('id-ID'),
         statusCode: HttpStatus.OK,
         message: 'presensi success',
       };
@@ -177,7 +179,7 @@ export class PresensiService {
         },
       });
       const date = new Date();
-      const currentDate = new Date().toISOString().split('T')[0];
+      const currentDate = new Date().toLocaleDateString('id-ID').split('T')[0];
 
       const today = date.toLocaleDateString('id-ID', { weekday: 'long' });
       const isAlreadyCheckOut = await this.prismaService.riwayatMasuk.findFirst(
@@ -205,6 +207,18 @@ export class PresensiService {
             message: 'presensi failed: dosen already checkout',
           };
         }
+        if (isAlreadyCheckOut.kegiatan == 'izin') {
+          return {
+            statusCode: HttpStatus.BAD_REQUEST,
+            message: 'presensi failed: dosen izin for today',
+          };
+        }
+      }
+      if (isAlreadyCheckOut == null) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'presensi failed: dosen not yet present',
+        };
       }
       await this.prismaService.riwayatMasuk.create({
         data: {
@@ -217,6 +231,7 @@ export class PresensiService {
         },
       });
       return {
+        time: date.toLocaleTimeString('id-ID'),
         statusCode: HttpStatus.OK,
         message: 'checkout success',
       };
@@ -240,7 +255,10 @@ export class PresensiService {
           account_id: account.uuid,
         },
       });
-      const currentDate = new Date().toISOString().split('T')[0];
+      const currentDate = new Date().toLocaleDateString('id-ID').split('T')[0];
+      const date = new Date();
+
+      const today = date.toLocaleDateString('id-ID', { weekday: 'long' });
       const isAlreadyIzinToday = await this.prismaService.izin.findFirst({
         where: {
           tanggal: currentDate,
@@ -252,13 +270,22 @@ export class PresensiService {
           message: 'izin failed: dosen already izin today',
         };
       }
-
       await this.prismaService.izin.create({
         data: {
           alasan: reason,
           bukti: fileUrl,
           nidn: dosesnAcc.nidn,
           tanggal: currentDate,
+        },
+      });
+      await this.prismaService.riwayatMasuk.create({
+        data: {
+          hari: today.toString(),
+          jam: date.toLocaleTimeString('id-ID'),
+          tanggal: `${currentDate}`,
+          tipe: 'izin',
+          nidn: dosesnAcc.nidn,
+          kegiatan: 'izin',
         },
       });
       return {
@@ -286,7 +313,7 @@ export class PresensiService {
       });
       let dateFilter: any = {};
       const currentDate = new Date();
-      const dayStart = new Date().toISOString().split('T')[0];
+      const dayStart = new Date().toLocaleDateString('id-ID').split('T')[0];
 
       if (filter == 'daily') {
         dateFilter = {
@@ -302,12 +329,11 @@ export class PresensiService {
         );
         dateFilter = {
           tanggal: {
-            gte: firstDayOfWeek.toISOString().split('T')[0], // Adjust date format if needed
-            lte: lastDayOfWeek.toISOString().split('T')[0], // Adjust date format if needed
+            gte: firstDayOfWeek.toLocaleDateString('id-ID').split('T')[0], // Adjust date format if needed
+            lte: lastDayOfWeek.toLocaleDateString('id-ID').split('T')[0], // Adjust date format if needed
           },
         };
       }
-      console.log(dateFilter);
 
       const totalCount = await this.prismaService.riwayatMasuk.count({
         where: {
@@ -323,6 +349,7 @@ export class PresensiService {
           nidn: dosesnAcc.nidn,
           ...dateFilter,
         },
+        orderBy: [{ tanggal: 'desc' }, { jam: 'desc' }],
       });
       const data: Activity[] = activityDosen.map((activity) => ({
         activity: activity.kegiatan,

@@ -93,7 +93,7 @@ model RiwayatMasuk {
   nidn     String
   jam      String
   hari     String
-  tanggal  String
+  tanggal                                                          String
   kegiatan Kegiatan
   tipe     Tipe
   dosen    Dosen    @relation(fields: [nidn], references: [nidn])
@@ -102,6 +102,7 @@ model RiwayatMasuk {
 enum Tipe {
   online
   offline
+  izin
 }
 
 enum StatusSemester {
@@ -112,6 +113,7 @@ enum StatusSemester {
 enum Kegiatan {
   masuk
   keluar
+  izin
 }
 
 model ThriDarma {

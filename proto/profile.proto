@@ -20,6 +20,7 @@ message ProfileDosenResponse {
     string jabatanAkademik = 7 ;
     string noTelephone = 8;
     string alamatSurel = 9;
+    bool isAlreadyPresensi = 10;
 }
 
 message Account {

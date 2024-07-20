@@ -57,6 +57,7 @@ message IzinRequest {
 }
 
 message BaseResponse {
-    int32 statusCode =1;
-    string message =2;
+    optional string time = 1;
+    int32 statusCode =2;
+    string message =3;
 }
