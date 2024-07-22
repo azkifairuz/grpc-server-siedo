@@ -295,7 +295,14 @@ export class PresensiService {
         checkoutDate.getTime() - checkinDate.getTime();
       const durationInHours = durationInMilliseconds / 3600000; // Convert milliseconds to hours
 
-      const period = `${startOfWeek(new Date(currentDate)).toLocaleDateString('id-ID')} - ${endOfWeek(new Date(currentDate)).toLocaleDateString('id-ID')}`;
+      const startOfWeekDate = startOfWeek(
+        new Date(currentDate.split('/').reverse().join('-')),
+      );
+      const endOfWeekDate = endOfWeek(
+        new Date(currentDate.split('/').reverse().join('-')),
+      );
+
+      const period = `${format(startOfWeekDate, 'dd/MM/yyyy')} - ${format(endOfWeekDate, 'dd/MM/yyyy')}`;
       await this.prismaService.riwayatMasuk.create({
         data: {
           hari: today.toString(),

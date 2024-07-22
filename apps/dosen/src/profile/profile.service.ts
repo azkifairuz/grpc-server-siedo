@@ -10,6 +10,7 @@ import {
   ProfileDosenRequest,
 } from 'proto/profile';
 import { DosenProfileValidation } from './dosen-profile.validate';
+import { endOfWeek, format, startOfWeek } from 'date-fns';
 
 @Injectable()
 export class ProfileService {
@@ -45,18 +46,52 @@ export class ProfileService {
             jam: 'desc',
           },
         });
+      const semesterAktif = await this.prismaService.semesterAktif.findFirst({
+        where: {
+          status: 'active',
+        },
+      });
       const jurnalDosen = await this.prismaService.jurnal.findFirst({
         where: {
-          nidn: dosenAccount.nidn,
+          AND: [
+            { nidn: dosenAccount.nidn },
+            { semesterAktif: semesterAktif.id },
+          ],
         },
       });
 
-      const pkmDosen = await this.prismaService.pkm.findFirst({
+      const pkmDosen = await this.prismaService.pKM.findFirst({
         where: {
-          nidn: dosenAccount.nidn,
+          AND: [
+            { nidn: dosenAccount.nidn },
+            { semesterAktif: semesterAktif.id },
+          ],
         },
       });
-      
+
+      const startOfWeekDate = startOfWeek(
+        new Date(currentDate.split('/').reverse().join('-')),
+      );
+      const endOfWeekDate = endOfWeek(
+        new Date(currentDate.split('/').reverse().join('-')),
+      );
+      const period = `${format(startOfWeekDate, 'dd/MM/yyyy')} - ${format(endOfWeekDate, 'dd/MM/yyyy')}`;
+      const totalJamKerjaDosen =
+        await this.prismaService.totalJamKerjaDosen.findFirst({
+          where: {
+            AND: [{ nidn: dosenAccount.nidn }, { periode: period }],
+          },
+        });
+      let statusThridarma = 'belum memenuhi';
+      if (totalJamKerjaDosen) {
+        if (totalJamKerjaDosen.totalJam > 3 && pkmDosen && jurnalDosen) {
+          statusThridarma = 'memenuhi';
+        }
+      } else {
+        statusThridarma = 'belum memenuhi';
+      }
+      console.log(jurnalDosen, totalJamKerjaDosen, pkmDosen);
+
       let isAlreadyPresensi = false;
       if (isAlreadyPresensiData) {
         isAlreadyPresensi = isAlreadyPresensiData.kegiatan !== 'keluar';
@@ -77,6 +112,7 @@ export class ProfileService {
           noTelephone: dosenAccount.dosen.no_telephone,
           programStudi: dosenAccount.dosen.program_studi,
           isAlreadyPresensi: isAlreadyPresensi,
+          statusThridarma: statusThridarma,
         },
       };
     } catch (error) {
