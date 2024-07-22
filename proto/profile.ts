@@ -22,6 +22,7 @@ export interface ProfileDosenResponse {
   alamatSurel: string;
   isAlreadyPresensi: boolean;
   statusThridarma: string;
+  statusKerajinan: string;
 }
 
 export interface Account {

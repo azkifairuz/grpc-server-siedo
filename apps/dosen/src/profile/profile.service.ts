@@ -18,6 +18,12 @@ export class ProfileService {
     private prismaService: PrismaService,
     private validationService: ValidationService,
   ) {}
+
+  getPerformance(totalTime: number): string {
+    if (totalTime <= 10) return 'kurang';
+    if (totalTime <= 20) return 'baik';
+    return 'baik sekali';
+  }
   async getProfile(account: Account): Promise<BaseResponse> {
     try {
       const dosenAccount = await this.prismaService.dosenAccount.findFirst({
@@ -75,7 +81,9 @@ export class ProfileService {
       const endOfWeekDate = endOfWeek(
         new Date(currentDate.split('/').reverse().join('-')),
       );
+
       const period = `${format(startOfWeekDate, 'dd/MM/yyyy')} - ${format(endOfWeekDate, 'dd/MM/yyyy')}`;
+
       const totalJamKerjaDosen =
         await this.prismaService.totalJamKerjaDosen.findFirst({
           where: {
@@ -113,6 +121,7 @@ export class ProfileService {
           programStudi: dosenAccount.dosen.program_studi,
           isAlreadyPresensi: isAlreadyPresensi,
           statusThridarma: statusThridarma,
+          statusKerajinan: this.getPerformance(totalJamKerjaDosen.totalJam),
         },
       };
     } catch (error) {
