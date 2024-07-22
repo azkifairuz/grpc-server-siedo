@@ -50,4 +50,7 @@ export class ProtoPresensiService implements OnModuleInit {
     };
     return this.presensiClientService.getActivity(activityRequest);
   }
+  getWeeklyRecap(account: Account) {
+    return this.presensiClientService.getWeeklyRecap(account);
+  }
 }

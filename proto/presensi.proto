@@ -9,7 +9,7 @@ service PresensiService {
     rpc Checkout (Account) returns (BaseResponse);
     rpc Izin (IzinRequest) returns (BaseResponse);
     rpc GetActivity (GetActivityRequest) returns (GetActivityResponse);
-    rpc GetWeeklyRecap (WeeklyRecapResponse) returns (WeeklyRecapResponse);
+    rpc GetWeeklyRecap (Account) returns (WeeklyRecapResponse);
 }
 
 message Account {
@@ -71,10 +71,7 @@ message WeeklyRecapResponse {
     string message = 4;
 }
 
-message WeeklyRecapRequest {
-    int32 page = 1;
-    Account account = 3;
-}
+
 
 message BaseResponse {
     optional string time = 1;

@@ -29,8 +29,8 @@ export class ProfileService {
       });
       const currentDate = new Date().toLocaleDateString('id-ID').split('T')[0];
 
-      const isAlreadyPresensi = await this.prismaService.riwayatMasuk.findFirst(
-        {
+      const isAlreadyPresensiData =
+        await this.prismaService.riwayatMasuk.findFirst({
           where: {
             AND: [
               {
@@ -44,9 +44,13 @@ export class ProfileService {
           orderBy: {
             jam: 'desc',
           },
-        },
-      );
-
+        });
+      let isAlreadyPresensi = false;
+      if (isAlreadyPresensiData) {
+        isAlreadyPresensi = isAlreadyPresensiData.kegiatan !== 'keluar';
+      } else {
+        isAlreadyPresensi = false;
+      }
       return {
         statusCode: HttpStatus.OK,
         message: 'get dosen profile success',
@@ -60,7 +64,7 @@ export class ProfileService {
           tanggalLahir: dosenAccount.dosen.tanggal_lahir.toISOString(),
           noTelephone: dosenAccount.dosen.no_telephone,
           programStudi: dosenAccount.dosen.program_studi,
-          isAlreadyPresensi: isAlreadyPresensi.kegiatan !== 'keluar',
+          isAlreadyPresensi: isAlreadyPresensi,
         },
       };
     } catch (error) {

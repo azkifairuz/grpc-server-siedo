@@ -29,6 +29,12 @@ export interface Activity {
   time: string;
 }
 
+export interface WeeklyRecap {
+  totalTime: string;
+  period: string;
+  performance: string;
+}
+
 export interface PaginationData {
   page: number;
   size: number;
@@ -55,6 +61,13 @@ export interface IzinRequest {
   document: Uint8Array;
 }
 
+export interface WeeklyRecapResponse {
+  data: WeeklyRecap[];
+  pagination?: PaginationData | undefined;
+  statusCode: number;
+  message: string;
+}
+
 export interface BaseResponse {
   time?: string | undefined;
   statusCode: number;
@@ -73,6 +86,8 @@ export interface PresensiServiceClient {
   izin(request: IzinRequest): Observable<BaseResponse>;
 
   getActivity(request: GetActivityRequest): Observable<GetActivityResponse>;
+
+  getWeeklyRecap(request: Account): Observable<WeeklyRecapResponse>;
 }
 
 export interface PresensiServiceController {
@@ -87,11 +102,22 @@ export interface PresensiServiceController {
   getActivity(
     request: GetActivityRequest,
   ): Promise<GetActivityResponse> | Observable<GetActivityResponse> | GetActivityResponse;
+
+  getWeeklyRecap(
+    request: Account,
+  ): Promise<WeeklyRecapResponse> | Observable<WeeklyRecapResponse> | WeeklyRecapResponse;
 }
 
 export function PresensiServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["presensiOffline", "presensiOnline", "checkout", "izin", "getActivity"];
+    const grpcMethods: string[] = [
+      "presensiOffline",
+      "presensiOnline",
+      "checkout",
+      "izin",
+      "getActivity",
+      "getWeeklyRecap",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("PresensiService", method)(constructor.prototype[method], method, descriptor);

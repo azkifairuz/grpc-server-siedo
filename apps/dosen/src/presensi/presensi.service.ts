@@ -6,10 +6,11 @@ import {
   BaseResponse,
   GetActivityResponse,
   PaginationData,
+  WeeklyRecapResponse,
 } from 'proto/presensi';
 import { uploadFile } from 'utils/fileUploadBucket';
 import { formatDateString } from 'utils/formatDate';
-
+import { startOfWeek, endOfWeek, format, parse } from 'date-fns';
 @Injectable()
 export class PresensiService {
   constructor(private prismaService: PrismaService) {}
@@ -375,6 +376,98 @@ export class PresensiService {
         data: [],
         message: `error: ${error}`,
         statusCode: 200,
+      };
+    }
+  }
+  getPerformance(totalTime: number): string {
+    if (totalTime <= 10) return 'kurang';
+    if (totalTime <= 20) return 'baik';
+    return 'baik sekali';
+  }
+
+  parseTime = (timeString: string): Date => {
+    const [hours, minutes, seconds] = timeString.split('.').map(Number);
+    return new Date(1970, 0, 1, hours, minutes, seconds);
+  };
+
+  formatPeriod = (start: Date, end: Date): string => {
+    return `${format(start, 'dd/MM/yyyy')} - ${format(end, 'dd/MM/yyyy')}`;
+  };
+  calculateDuration = (startTime: Date, endTime: Date): number => {
+    const diff = endTime.getTime() - startTime.getTime();
+    return diff / 3600000; // Convert milliseconds to hours
+  };
+  async weeklyRecap(account: Account): Promise<WeeklyRecapResponse> {
+    try {
+      const dosesnAcc = await this.prismaService.dosenAccount.findFirst({
+        where: {
+          account_id: account.uuid,
+        },
+      });
+
+      const records = await this.prismaService.riwayatMasuk.findMany({
+        where: {
+          nidn: dosesnAcc.nidn,
+        },
+        orderBy: [{ tanggal: 'asc' }, { jam: 'asc' }],
+      });
+      console.log(records);
+
+      const groupedByWeek: Record<string, typeof records> = records.reduce(
+        (acc, record) => {
+          const date = parse(record.tanggal, 'd/M/yyyy', new Date());
+          const startOfWeekDate = startOfWeek(date);
+          const endOfWeekDate = endOfWeek(date);
+          const weekKey = this.formatPeriod(startOfWeekDate, endOfWeekDate);
+
+          if (!acc[weekKey]) {
+            acc[weekKey] = [];
+          }
+
+          acc[weekKey].push(record);
+          return acc;
+        },
+        {} as Record<string, typeof records>,
+      );
+      console.log(groupedByWeek);
+
+      const weeklyRecapData = Object.entries(groupedByWeek).map(
+        ([weekKey, records]: [string, typeof records]) => {
+          let totalTimeInHours = 0;
+
+          for (let i = 0; i < records.length; i++) {
+            if (
+              records[i].kegiatan === 'masuk' &&
+              records[i + 1] &&
+              records[i + 1].kegiatan === 'keluar'
+            ) {
+              const startTime = this.parseTime(records[i].jam);
+              const endTime = this.parseTime(records[i + 1].jam);
+              totalTimeInHours += this.calculateDuration(startTime, endTime);
+            }
+          }
+
+          const totalTime = totalTimeInHours.toFixed(2);
+          const performance = this.getPerformance(parseFloat(totalTime));
+
+          return {
+            period: weekKey,
+            totalTime,
+            performance,
+          };
+        },
+      );
+
+      return {
+        data: weeklyRecapData,
+        statusCode: 200,
+        message: 'Success',
+      };
+    } catch (error) {
+      return {
+        data: [],
+        statusCode: 500,
+        message: `Error ${error}`,
       };
     }
   }
