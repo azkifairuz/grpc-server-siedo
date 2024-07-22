@@ -14,7 +14,24 @@ import { startOfWeek, endOfWeek, format, parse } from 'date-fns';
 @Injectable()
 export class PresensiService {
   constructor(private prismaService: PrismaService) {}
+  getPerformance(totalTime: number): string {
+    if (totalTime <= 10) return 'kurang';
+    if (totalTime <= 20) return 'baik';
+    return 'baik sekali';
+  }
 
+  parseTime = (timeString: string): Date => {
+    const [hours, minutes, seconds] = timeString.split('.').map(Number);
+    return new Date(1970, 0, 1, hours, minutes, seconds);
+  };
+
+  formatPeriod = (start: Date, end: Date): string => {
+    return `${format(start, 'dd/MM/yyyy')} - ${format(end, 'dd/MM/yyyy')}`;
+  };
+  calculateDuration = (startTime: Date, endTime: Date): number => {
+    const diff = endTime.getTime() - startTime.getTime();
+    return diff / 3600000; // Convert milliseconds to hours
+  };
   async presensiOffline(
     isInLocation: boolean,
     account: Account,
@@ -221,6 +238,64 @@ export class PresensiService {
           message: 'presensi failed: dosen not yet present',
         };
       }
+      const lastCheckIn = await this.prismaService.riwayatMasuk.findFirst({
+        where: {
+          AND: [
+            {
+              tanggal: currentDate,
+            },
+            {
+              nidn: dosen.nidn,
+            },
+            {
+              kegiatan: 'masuk',
+            },
+          ],
+        },
+        orderBy: {
+          jam: 'desc',
+        },
+      });
+
+      if (lastCheckIn == null) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'presensi failed: no check-in record found for today',
+        };
+      }
+
+      const checkinTime = isAlreadyCheckOut.jam;
+      const checkoutTime = date.toLocaleTimeString('id-ID');
+
+      const [checkinHour, checkinMinute, checkinSecond] = checkinTime
+        .split('.')
+        .map(Number);
+      const [checkoutHour, checkoutMinute, checkoutSecond] = checkoutTime
+        .split('.')
+        .map(Number);
+
+      const checkinDate = new Date(
+        1970,
+        0,
+        1,
+        checkinHour,
+        checkinMinute,
+        checkinSecond,
+      );
+      const checkoutDate = new Date(
+        1970,
+        0,
+        1,
+        checkoutHour,
+        checkoutMinute,
+        checkoutSecond,
+      );
+
+      const durationInMilliseconds =
+        checkoutDate.getTime() - checkinDate.getTime();
+      const durationInHours = durationInMilliseconds / 3600000; // Convert milliseconds to hours
+
+      const period = `${startOfWeek(new Date(currentDate)).toLocaleDateString('id-ID')} - ${endOfWeek(new Date(currentDate)).toLocaleDateString('id-ID')}`;
       await this.prismaService.riwayatMasuk.create({
         data: {
           hari: today.toString(),
@@ -231,6 +306,34 @@ export class PresensiService {
           kegiatan: 'keluar',
         },
       });
+      const totalJamKerjaRecord =
+        await this.prismaService.totalJamKerjaDosen.findFirst({
+          where: {
+            periode: period,
+            nidn: dosen.nidn,
+          },
+        });
+
+      if (totalJamKerjaRecord) {
+        await this.prismaService.totalJamKerjaDosen.update({
+          where: {
+            id: totalJamKerjaRecord.id,
+          },
+          data: {
+            totalJam: {
+              increment: durationInHours,
+            },
+          },
+        });
+      } else {
+        await this.prismaService.totalJamKerjaDosen.create({
+          data: {
+            periode: period,
+            totalJam: durationInHours,
+            nidn: dosen.nidn,
+          },
+        });
+      }
       return {
         time: date.toLocaleTimeString('id-ID'),
         statusCode: HttpStatus.OK,
@@ -379,24 +482,7 @@ export class PresensiService {
       };
     }
   }
-  getPerformance(totalTime: number): string {
-    if (totalTime <= 10) return 'kurang';
-    if (totalTime <= 20) return 'baik';
-    return 'baik sekali';
-  }
 
-  parseTime = (timeString: string): Date => {
-    const [hours, minutes, seconds] = timeString.split('.').map(Number);
-    return new Date(1970, 0, 1, hours, minutes, seconds);
-  };
-
-  formatPeriod = (start: Date, end: Date): string => {
-    return `${format(start, 'dd/MM/yyyy')} - ${format(end, 'dd/MM/yyyy')}`;
-  };
-  calculateDuration = (startTime: Date, endTime: Date): number => {
-    const diff = endTime.getTime() - startTime.getTime();
-    return diff / 3600000; // Convert milliseconds to hours
-  };
   async weeklyRecap(account: Account): Promise<WeeklyRecapResponse> {
     try {
       const dosesnAcc = await this.prismaService.dosenAccount.findFirst({

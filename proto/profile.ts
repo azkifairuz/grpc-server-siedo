@@ -21,6 +21,7 @@ export interface ProfileDosenResponse {
   noTelephone: string;
   alamatSurel: string;
   isAlreadyPresensi: boolean;
+  statusThridarma: string;
 }
 
 export interface Account {

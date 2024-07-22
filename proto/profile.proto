@@ -21,6 +21,7 @@ message ProfileDosenResponse {
     string noTelephone = 8;
     string alamatSurel = 9;
     bool isAlreadyPresensi = 10;
+    string statusThridarma = 11;
 }
 
 message Account {

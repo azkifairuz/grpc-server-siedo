@@ -45,6 +45,18 @@ export class ProfileService {
             jam: 'desc',
           },
         });
+      const jurnalDosen = await this.prismaService.jurnal.findFirst({
+        where: {
+          nidn: dosenAccount.nidn,
+        },
+      });
+
+      const pkmDosen = await this.prismaService.pkm.findFirst({
+        where: {
+          nidn: dosenAccount.nidn,
+        },
+      });
+      
       let isAlreadyPresensi = false;
       if (isAlreadyPresensiData) {
         isAlreadyPresensi = isAlreadyPresensiData.kegiatan !== 'keluar';
@@ -219,6 +231,7 @@ export class ProfileService {
           jadwal: true,
         },
       });
+
       const totalPages = Math.ceil(totalData / 10);
       const pagination: PaginationData = {
         page,
