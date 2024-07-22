@@ -20,6 +20,9 @@ message ProfileDosenResponse {
     string jabatanAkademik = 7 ;
     string noTelephone = 8;
     string alamatSurel = 9;
+    bool isAlreadyPresensi = 10;
+    string statusThridarma = 11;
+    string statusKerajinan = 12;
 }
 
 message Account {
@@ -39,6 +42,7 @@ message ProfileDosenRequest {
     string noTelephone = 7;
     string alamatSurel = 8;
 }
+
 message JadwalDosen {
     string mataKuliah = 1;
     string hari = 2;

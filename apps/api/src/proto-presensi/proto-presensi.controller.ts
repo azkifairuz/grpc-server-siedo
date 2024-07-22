@@ -47,8 +47,13 @@ export class ProtoPresensiController {
   activity(
     @Authentication() account: Account,
     @Param('filter') filter: string,
-    @Query('page') page: string,
+    @Query('page') page: string = '1',
   ) {
     return this.presensiService.getActivity(filter, parseInt(page), account);
+  }
+
+  @Get('weekly-recap')
+  weeklyRecap(@Authentication() account: Account) {
+    return this.presensiService.getWeeklyRecap(account);
   }
 }

@@ -1,5 +1,5 @@
 export function formatDateString(dateString: string): string {
-  const [day, month, year] = dateString.split('-').map(Number);
+  const [day, month, year] = dateString.split('/').map(Number);
 
   const months = [
     'Januari',
@@ -16,5 +16,5 @@ export function formatDateString(dateString: string): string {
     'Desember',
   ];
 
-  return ` ${year} ${months[month - 1]} ${day}`;
+  return ` ${day} ${months[month - 1]} ${year}`;
 }

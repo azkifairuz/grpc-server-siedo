@@ -9,6 +9,7 @@ service PresensiService {
     rpc Checkout (Account) returns (BaseResponse);
     rpc Izin (IzinRequest) returns (BaseResponse);
     rpc GetActivity (GetActivityRequest) returns (GetActivityResponse);
+    rpc GetWeeklyRecap (Account) returns (WeeklyRecapResponse);
 }
 
 message Account {
@@ -31,6 +32,12 @@ message Activity {
     string time = 4;
 }
 
+message WeeklyRecap {
+    string totalTime = 1;
+    string period = 2;
+    string performance = 3;
+}
+
 message PaginationData {
     int32 page = 1;
     int32 size = 2;
@@ -50,13 +57,24 @@ message GetActivityResponse {
     int32 statusCode = 3;
     string message = 4;
 }
+
 message IzinRequest {
     Account account =1;
     string reason =2;
     bytes document =3;
 }
 
+message WeeklyRecapResponse {
+    repeated WeeklyRecap data = 1;
+    optional PaginationData pagination = 2;
+    int32 statusCode = 3;
+    string message = 4;
+}
+
+
+
 message BaseResponse {
-    int32 statusCode =1;
-    string message =2;
+    optional string time = 1;
+    int32 statusCode =2;
+    string message =3;
 }

@@ -7,6 +7,7 @@ import {
   IzinRequest,
   PresensiOfflineRequest,
   PresensiServiceController,
+  WeeklyRecapResponse,
 } from 'proto/presensi';
 import { PresensiService } from './presensi.service';
 import { GrpcMethod } from '@nestjs/microservices';
@@ -65,6 +66,14 @@ export class PresensiController implements PresensiServiceController {
         request.filter,
         request.page,
       );
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+  @GrpcMethod('PresensiService', 'getWeeklyRecap')
+  async getWeeklyRecap(request: Account): Promise<WeeklyRecapResponse> {
+    try {
+      return this.presensiService.weeklyRecap(request);
     } catch (error) {
       throw new Error(error);
     }

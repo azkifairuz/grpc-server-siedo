@@ -8,12 +8,12 @@ datasource db {
 }
 
 model Dosen {
-  nidn               String         @id
+  nidn               String               @id
   nama               String
   program_studi      String
   jenjang_pendidikan String
   jenis_kelamin      String
-  tanggal_lahir      DateTime       @db.Date
+  tanggal_lahir      DateTime             @db.Date
   jabatan_akademik   String
   no_telephone       String
   alamat_surel       String
@@ -24,6 +24,7 @@ model Dosen {
   Jurnal             Jurnal[]
   PKM                PKM[]
   Izin               Izin[]
+  TotalJamKerjaDosen TotalJamKerjaDosen[]
 }
 
 model Account {
@@ -102,6 +103,7 @@ model RiwayatMasuk {
 enum Tipe {
   online
   offline
+  izin
 }
 
 enum StatusSemester {
@@ -112,6 +114,7 @@ enum StatusSemester {
 enum Kegiatan {
   masuk
   keluar
+  izin
 }
 
 model ThriDarma {
@@ -133,14 +136,22 @@ model Jadwal {
   DosenJadwal  DosenJadwal[]
 }
 
+model TotalJamKerjaDosen {
+  id    Int    @id @default(autoincrement())
+  nidn  String
+  dosen Dosen  @relation(fields: [nidn], references: [nidn])
+  periode String
+  totalJam Int
+}
+
 model DosenJadwal {
   id        Int    @id @default(autoincrement())
   jadwal_id Int
   dosen_id  String
   hari      String
   kelas     String
-  jadwal Jadwal @relation(fields: [jadwal_id], references: [id])
-  dosen  Dosen  @relation(fields: [dosen_id], references: [nidn])
+  jadwal    Jadwal @relation(fields: [jadwal_id], references: [id])
+  dosen     Dosen  @relation(fields: [dosen_id], references: [nidn])
 }
 
 model Izin {
